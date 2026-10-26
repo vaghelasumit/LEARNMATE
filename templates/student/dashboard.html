@@ -1,0 +1,142 @@
+{% extends 'base.html' %}
+
+{% block title %}Student Dashboard - LearnMate{% endblock %}
+
+{% block content %}
+<div class="container">
+    <!-- Welcome Header -->
+    <div class="d-flex justify-content-between align-items-center mb-4 flex-wrap gap-2">
+        <div>
+            <h3 class="fw-bold mb-1">Student Dashboard</h3>
+            <p class="text-muted mb-0">Welcome back, <strong>{{ user.first_name|default:user.username }}</strong>! Ready to learn?</p>
+        </div>
+        <div>
+            <a href="{% url 'courses' %}" class="btn btn-primary btn-sm px-3">
+                Explore Subjects
+            </a>
+        </div>
+    </div>
+
+    <!-- Quick Stats Cards -->
+    <div class="row g-3 mb-4">
+        <div class="col-md-3 col-6">
+            <div class="stat-box">
+                <div class="stat-number">{{ subjects.count }}</div>
+                <div class="stat-label">Available Subjects</div>
+            </div>
+        </div>
+        <div class="col-md-3 col-6">
+            <div class="stat-box border-warning">
+                <div class="stat-number text-warning">{{ pending_revisions }}</div>
+                <div class="stat-label">Pending Mistakes</div>
+            </div>
+        </div>
+        <div class="col-md-3 col-6">
+            <div class="stat-box border-success">
+                <div class="stat-number text-success">{{ earned_certificates }}</div>
+                <div class="stat-label">Certificates Earned</div>
+            </div>
+        </div>
+        <div class="col-md-3 col-6">
+            <div class="stat-box border-info">
+                <div class="stat-number text-info">{{ bookmarks_count }}</div>
+                <div class="stat-label">Saved Bookmarks</div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Main Subject Section (Matches Sketch 4 "Learn and Practice") -->
+    <div class="row g-4 mb-4">
+        <div class="col-lg-8">
+            <div class="custom-card">
+                <div class="custom-card-header d-flex justify-content-between align-items-center">
+                    <span>Learn and Practice</span>
+                    <a href="{% url 'courses' %}" class="btn btn-sm btn-outline-primary">View All</a>
+                </div>
+                <div class="p-3">
+                    <div class="row g-3">
+                        {% for subject in subjects %}
+                        <div class="col-md-6">
+                            <div class="p-3 border rounded h-100 d-flex flex-column justify-content-between bg-light position-relative">
+                                <!-- Corner Bookmark Button -->
+                                <button class="card-bookmark-corner bookmark-toggle-btn {% if subject.subject_id in bookmarked_subject_ids %}active is-bookmarked{% endif %}"
+                                        data-type="subject" data-id="{{ subject.subject_id }}"
+                                        title="{% if subject.subject_id in bookmarked_subject_ids %}Remove bookmark{% else %}Bookmark subject{% endif %}"
+                                        style="top: 8px; right: 8px; width: 32px; height: 32px; font-size: 0.88rem;">
+                                    <i class="bi {% if subject.subject_id in bookmarked_subject_ids %}bi-star-fill text-warning{% else %}bi-star text-muted{% endif %}"></i>
+                                </button>
+                                <div>
+                                    <div class="mb-2">
+                                        <span class="badge bg-primary">Subject</span>
+                                    </div>
+                                    <h5 class="fw-bold mb-1 pe-4">{{ subject.subject_name }}</h5>
+                                    <p class="text-muted small mb-3">{{ subject.description|truncatewords:15 }}</p>
+                                </div>
+                                <div class="d-flex gap-2">
+                                    <a href="{% url 'course_detail' subject.subject_id %}" class="btn btn-primary btn-sm flex-grow-1">
+                                        View Subject
+                                    </a>
+                                    <a href="{% url 'flashcards_deck' subject.subject_id %}" class="btn btn-outline-success btn-sm" title="Practice Flashcards">
+                                        Flashcards
+                                    </a>
+                                </div>
+                            </div>
+                        </div>
+                        {% empty %}
+                        <div class="col-12 text-center py-4 text-muted">
+                            No subjects available yet.
+                        </div>
+                        {% endfor %}
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Right Column: Mistake Revision Alert & Recent Quiz Attempts -->
+        <div class="col-lg-4">
+            <!-- Mistake Revision Box (Simple Clean Card Design) -->
+            {% if pending_revisions > 0 %}
+            <div class="custom-card mb-4">
+                <div class="p-3">
+                    <div class="d-flex justify-content-between align-items-center mb-2">
+                        <h6 class="fw-bold mb-0 text-dark">Revision Needed</h6>
+                        <span class="badge bg-warning-subtle text-warning-emphasis border border-warning-subtle">{{ pending_revisions }} Pending</span>
+                    </div>
+                    <p class="text-muted small mb-3">
+                        You have <strong>{{ pending_revisions }}</strong> incorrectly answered questions waiting in your Revision.
+                    </p>
+                    <a href="{% url 'revision_hub' %}" class="btn btn-primary btn-sm w-100">
+                        Practice Mistakes Now
+                    </a>
+                </div>
+            </div>
+            {% endif %}
+
+            <!-- Recent Quiz Results Card -->
+            <div class="custom-card">
+                <div class="custom-card-header d-flex justify-content-between align-items-center">
+                    <span>Recent Quizzes</span>
+                    <a href="{% url 'quiz_history' %}" class="btn btn-sm btn-link text-decoration-none p-0">All History</a>
+                </div>
+                <div class="p-3">
+                    {% for result in recent_attempts %}
+                    <div class="d-flex justify-content-between align-items-center border-bottom py-2">
+                        <div>
+                            <strong class="d-block small">{{ result.quiz.quiz_title }}</strong>
+                            <span class="text-muted" style="font-size: 0.75rem;">{{ result.result_date|date:"d M Y, h:i A" }}</span>
+                        </div>
+                        <div class="text-end">
+                            <span class="badge {% if result.result_status == 'Pass' %}bg-success{% else %}bg-danger{% endif %}">
+                                {{ result.score }}/{{ result.total_marks }} ({{ result.result_status }})
+                            </span>
+                        </div>
+                    </div>
+                    {% empty %}
+                    <p class="text-muted small text-center my-3">No quizzes attempted yet. Try a quiz from your subjects!</p>
+                    {% endfor %}
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

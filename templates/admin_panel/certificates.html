@@ -1,0 +1,158 @@
+{% extends 'base.html' %}
+
+{% block title %}Certificates Management - Admin{% endblock %}
+
+{% block content %}
+<div class="container py-3">
+    <div class="d-flex justify-content-between align-items-center mb-4 flex-wrap gap-2">
+        <div>
+            <h3 class="fw-bold mb-1">Certificates Management</h3>
+            <p class="text-muted small mb-0">Review quiz passes, generate official certificates, and track awarded credentials</p>
+        </div>
+        <a href="{% url 'admin_dashboard' %}" class="btn btn-outline-secondary btn-sm">
+            Back to Dashboard
+        </a>
+    </div>
+
+    <!-- Navigation Tabs: Pending Requests & Issued Certificates -->
+    <ul class="nav nav-tabs mb-4" id="certTabs" role="tablist">
+        <li class="nav-item" role="presentation">
+            <button class="nav-link {% if pending_requests %}active{% endif %} fw-semibold" id="pending-tab" data-bs-toggle="tab" data-bs-target="#pending-pane" type="button" role="tab">
+                Pending Generation
+                {% if pending_requests %}
+                <span class="badge bg-warning text-dark ms-1">{{ pending_requests|length }}</span>
+                {% else %}
+                <span class="badge bg-secondary ms-1">0</span>
+                {% endif %}
+            </button>
+        </li>
+        <li class="nav-item" role="presentation">
+            <button class="nav-link {% if not pending_requests %}active{% endif %} fw-semibold" id="issued-tab" data-bs-toggle="tab" data-bs-target="#issued-pane" type="button" role="tab">
+                Issued Certificates
+                <span class="badge bg-primary ms-1">{{ certificates|length }}</span>
+            </button>
+        </li>
+    </ul>
+
+    <div class="tab-content" id="certTabContent">
+        <!-- TAB 1: PENDING CERTIFICATE GENERATION -->
+        <div class="tab-pane fade {% if pending_requests %}show active{% endif %}" id="pending-pane" role="tabpanel">
+            <div class="custom-card p-4">
+                <div class="d-flex justify-content-between align-items-center mb-3 flex-wrap gap-2">
+                    <div>
+                        <h5 class="fw-bold mb-0 text-dark">Students Awaiting Certificate Generation</h5>
+                        <small class="text-muted">These students have passed the subject quiz and need you to generate their certificate</small>
+                    </div>
+                </div>
+
+                <div class="table-responsive">
+                    <table class="table table-hover align-middle">
+                        <thead class="table-light">
+                            <tr>
+                                <th>#</th>
+                                <th>Student Name</th>
+                                <th>Subject</th>
+                                <th>Quiz Title</th>
+                                <th>Score & Percentage</th>
+                                <th>Attempt Date</th>
+                                <th>Action</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            {% for res in pending_requests %}
+                            <tr>
+                                <td>{{ forloop.counter }}</td>
+                                <td>
+                                    <strong>{{ res.student.first_name|default:res.student.username }}</strong>
+                                    <div class="text-muted small">{{ res.student.email }}</div>
+                                </td>
+                                <td><span class="fw-semibold text-dark">{{ res.quiz.subject.subject_name }}</span></td>
+                                <td>{{ res.quiz.quiz_title }}</td>
+                                <td>
+                                    <span class="badge bg-success fs-6">{{ res.score }}/{{ res.total_marks }} ({{ res.percentage }}%)</span>
+                                </td>
+                                <td>{{ res.result_date|date:"d M Y, h:i A" }}</td>
+                                <td>
+                                    <a href="{% url 'admin_generate_certificate' res.result_id %}" 
+                                       class="btn btn-primary btn-sm fw-bold shadow-sm"
+                                       onclick="return confirm('Generate official certificate for {{ res.student.username }} ({{ res.quiz.subject.subject_name }})?');">
+                                        🎓 Generate Certificate
+                                    </a>
+                                </td>
+                            </tr>
+                            {% empty %}
+                            <tr>
+                                <td colspan="7" class="text-center py-5 text-muted">
+                                    <div class="py-3">
+                                        <h6 class="text-muted mb-1">No Pending Certificate Requests</h6>
+                                        <small>All students who passed quizzes have already had their certificates generated.</small>
+                                    </div>
+                                </td>
+                            </tr>
+                            {% endfor %}
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+
+        <!-- TAB 2: ISSUED CERTIFICATES -->
+        <div class="tab-pane fade {% if not pending_requests %}show active{% endif %}" id="issued-pane" role="tabpanel">
+            <div class="custom-card p-4">
+                <div class="d-flex justify-content-between align-items-center mb-3 flex-wrap gap-2">
+                    <div>
+                        <h5 class="fw-bold mb-0 text-dark">All Issued &amp; Active Certificates</h5>
+                        <small class="text-muted">Certificates that have been approved, generated, and made available to students</small>
+                    </div>
+                </div>
+
+                <div class="table-responsive">
+                    <table class="table table-hover align-middle">
+                        <thead class="table-light">
+                            <tr>
+                                <th>#</th>
+                                <th>Certificate No</th>
+                                <th>Student Name</th>
+                                <th>Subject</th>
+                                <th>Score</th>
+                                <th>Issue Date</th>
+                                <th>Action</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            {% for cert in certificates %}
+                            <tr>
+                                <td>{{ forloop.counter }}</td>
+                                <td><code>{{ cert.certificate_no }}</code></td>
+                                <td>
+                                    <strong>{{ cert.student.first_name|default:cert.student.username }}</strong>
+                                    <div class="text-muted small">{{ cert.student.email }}</div>
+                                </td>
+                                <td><span class="fw-semibold text-dark">{{ cert.subject.subject_name }}</span></td>
+                                <td>
+                                    {% if cert.result %}
+                                    <span class="badge bg-success">{{ cert.result.percentage }}%</span>
+                                    {% else %}
+                                    <span class="badge bg-secondary">Granted</span>
+                                    {% endif %}
+                                </td>
+                                <td>{{ cert.issue_date|date:"d M Y" }}</td>
+                                <td>
+                                    <a href="{% url 'view_certificate' cert.certificate_no %}" class="btn btn-outline-primary btn-sm" target="_blank">
+                                        View Certificate
+                                    </a>
+                                </td>
+                            </tr>
+                            {% empty %}
+                            <tr>
+                                <td colspan="7" class="text-center py-4 text-muted">No certificates issued yet.</td>
+                            </tr>
+                            {% endfor %}
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

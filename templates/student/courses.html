@@ -1,0 +1,90 @@
+{% extends 'base.html' %}
+
+{% block title %}All Subjects - LearnMate{% endblock %}
+
+{% block content %}
+<div class="container">
+    <div class="d-flex justify-content-between align-items-center mb-4 flex-wrap gap-2">
+        <div>
+            <h3 class="fw-bold mb-0">Subjects</h3>
+        </div>
+        <div>
+            <form method="GET" action="{% url 'courses' %}" class="d-flex">
+                <input type="text" name="q" class="form-control form-control-sm me-2" placeholder="Search subjects..." value="{{ query }}">
+                <button type="submit" class="btn btn-primary btn-sm">Search</button>
+            </form>
+        </div>
+    </div>
+
+    <!-- Featured Subject Cards -->
+    <div class="row g-4 justify-content-center">
+        {% for subject in subjects %}
+        <div class="col-md-6 col-lg-4">
+            <div class="card h-100 border shadow-sm rounded-3 overflow-hidden d-flex flex-column bg-white" style="transition: transform 0.25s ease, box-shadow 0.25s ease;">
+                <!-- Top Image (Clean 200px Height Banner) -->
+                <div class="position-relative" style="height: 200px; overflow: hidden; background: #0f172a;">
+                    <img src="{{ subject.get_image_url }}" alt="{{ subject.subject_name }}" 
+                         style="width: 100%; height: 200px; object-fit: cover; display: block;"
+                         loading="lazy">
+                    <span class="position-absolute top-0 start-0 m-3 badge shadow-sm text-uppercase fw-bold" 
+                          style="background-color: var(--color-primary); color: #ffffff; font-size: 0.72rem; letter-spacing: 0.5px;">
+                        {% if forloop.first %}Popular{% elif forloop.last %}Core Subject{% else %}Recommended{% endif %}
+                    </span>
+                    <!-- Corner Bookmark Toggle Button -->
+                    <button class="card-bookmark-corner bookmark-toggle-btn {% if subject.subject_id in bookmarked_subject_ids %}active is-bookmarked{% endif %}"
+                            data-type="subject" data-id="{{ subject.subject_id }}"
+                            title="{% if subject.subject_id in bookmarked_subject_ids %}Remove bookmark{% else %}Bookmark this subject{% endif %}">
+                        <i class="bi {% if subject.subject_id in bookmarked_subject_ids %}bi-star-fill text-warning{% else %}bi-star text-muted{% endif %}"></i>
+                    </button>
+                </div>
+
+                <!-- Card Body (Matching Reference Format) -->
+                <div class="card-body p-4 d-flex flex-column justify-content-between flex-grow-1">
+                    <div>
+                        <!-- Title -->
+                        <h5 class="card-title fw-bold text-dark mb-1" style="font-size: 1.25rem;">
+                            {{ subject.subject_name }}
+                        </h5>
+                        <!-- Subtitle / Meta -->
+                        <p class="text-muted small mb-3" style="font-size: 0.85rem;">
+                            MCA Semester • {{ subject.created_at|date:"M Y" }}
+                        </p>
+
+                        <!-- Bullet Points List (Matching Reference) -->
+                        <ul class="list-unstyled mb-4" style="font-size: 0.88rem; color: #475569; line-height: 1.9;">
+                            <li><span style="color: var(--color-primary); font-weight: bold; margin-right: 8px;">•</span>{{ subject.materials.count }} Study Materials &amp; Notes</li>
+                            <li><span style="color: var(--color-primary); font-weight: bold; margin-right: 8px;">•</span>{{ subject.flashcards.count }} Interactive Flashcards</li>
+                            <li><span style="color: var(--color-primary); font-weight: bold; margin-right: 8px;">•</span>{{ subject.quizzes.count }} Practice Quizzes &amp; Scoring</li>
+                            <li><span style="color: var(--color-primary); font-weight: bold; margin-right: 8px;">•</span>Mistake-Based Revision Hub</li>
+                        </ul>
+                    </div>
+
+                    <!-- Bottom Action Buttons: Open Subject & Bookmark -->
+                    <div class="pt-2 mt-auto d-flex gap-2">
+                        <a href="{% url 'course_detail' subject.subject_id %}" 
+                           class="btn flex-grow-1 text-uppercase fw-semibold py-2"
+                           style="border: 1.5px solid var(--color-primary); color: var(--color-primary); letter-spacing: 0.5px; font-size: 0.82rem; transition: all 0.2s ease;"
+                           onmouseover="this.style.backgroundColor='var(--color-primary)'; this.style.color='#ffffff';"
+                           onmouseout="this.style.backgroundColor='transparent'; this.style.color='var(--color-primary)';">
+                            OPEN SUBJECT
+                        </a>
+                        <button class="btn bookmark-toggle-btn {% if subject.subject_id in bookmarked_subject_ids %}btn-warning{% else %}btn-outline-warning{% endif %} px-3 py-2 fw-semibold"
+                                data-type="subject" data-id="{{ subject.subject_id }}"
+                                data-label-active="Saved" data-label-inactive="Save"
+                                title="Bookmark this subject">
+                            <i class="bi {% if subject.subject_id in bookmarked_subject_ids %}bi-bookmark-fill{% else %}bi-bookmark{% endif %}"></i>
+                            <span>{% if subject.subject_id in bookmarked_subject_ids %}Saved{% else %}Save{% endif %}</span>
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </div>
+        {% empty %}
+        <div class="col-12 text-center py-5">
+            <h5 class="text-muted">No subjects found matching "{{ query }}"</h5>
+            <a href="{% url 'courses' %}" class="btn btn-outline-primary btn-sm mt-2">Clear Search</a>
+        </div>
+        {% endfor %}
+    </div>
+</div>
+{% endblock %}

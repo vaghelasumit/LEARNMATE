@@ -1,0 +1,79 @@
+{% extends 'base.html' %}
+
+{% block title %}Student Results - Admin{% endblock %}
+
+{% block content %}
+<div class="container py-3">
+    <div class="d-flex justify-content-between align-items-center mb-4 flex-wrap gap-2">
+        <div>
+            <h3 class="fw-bold mb-1">Student Quiz Results & Performance</h3>
+            <p class="text-muted small mb-0">Overview of all quiz attempts, scores, percentages, and pass/fail statuses</p>
+        </div>
+        <a href="{% url 'admin_dashboard' %}" class="btn btn-outline-secondary btn-sm">
+            Back to Dashboard
+        </a>
+    </div>
+
+    <div class="custom-card p-4">
+        <div class="table-responsive">
+            <table class="table table-hover align-middle">
+                <thead class="table-light">
+                    <tr>
+                        <th>#</th>
+                        <th>Student Name</th>
+                        <th>Subject</th>
+                        <th>Quiz Title</th>
+                        <th>Score</th>
+                        <th>Percentage</th>
+                        <th>Status</th>
+                        <th>Attempt Date</th>
+                        <th>Certificate</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for r in results %}
+                    <tr>
+                        <td>{{ forloop.counter }}</td>
+                        <td>
+                            <strong>{{ r.student.first_name|default:r.student.username }}</strong>
+                            <div class="text-muted small">{{ r.student.email }}</div>
+                        </td>
+                        <td><span class="fw-semibold text-dark">{{ r.quiz.subject.subject_name }}</span></td>
+                        <td>{{ r.quiz.quiz_title }}</td>
+                        <td><strong>{{ r.score }} / {{ r.total_marks }}</strong></td>
+                        <td>{{ r.percentage }}%</td>
+                        <td>
+                            <span class="badge {% if r.result_status == 'Pass' %}bg-success{% else %}bg-danger{% endif %}">
+                                {{ r.result_status }}
+                            </span>
+                        </td>
+                        <td>{{ r.result_date|date:"d M Y, h:i A" }}</td>
+                        <td>
+                            {% if r.result_status == 'Pass' %}
+                                {% if r.cert %}
+                                <a href="{% url 'view_certificate' r.cert.certificate_no %}" class="btn btn-outline-success btn-sm" target="_blank">
+                                    View Certificate
+                                </a>
+                                {% else %}
+                                <a href="{% url 'admin_generate_certificate' r.result_id %}?next={% url 'admin_student_results' %}" 
+                                   class="btn btn-primary btn-sm fw-bold shadow-sm"
+                                   onclick="return confirm('Generate official certificate for {{ r.student.username }} in {{ r.quiz.subject.subject_name }}?');">
+                                    🎓 Generate Certificate
+                                </a>
+                                {% endif %}
+                            {% else %}
+                                <span class="text-muted small">Not Eligible</span>
+                            {% endif %}
+                        </td>
+                    </tr>
+                    {% empty %}
+                    <tr>
+                        <td colspan="9" class="text-center py-4 text-muted">No student quiz attempts recorded yet.</td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+    </div>
+</div>
+{% endblock %}

@@ -1,0 +1,116 @@
+{% extends 'base.html' %}
+
+{% block title %}Manage Study Materials - Admin{% endblock %}
+
+{% block content %}
+<div class="container py-3">
+    <div class="d-flex justify-content-between align-items-center mb-4">
+        <div>
+            <h3 class="fw-bold mb-1">Manage Study Materials</h3>
+            <p class="text-muted small mb-0">Upload lecture notes, PDFs, presentations, or video links</p>
+        </div>
+        <a href="{% url 'admin_dashboard' %}" class="btn btn-outline-secondary btn-sm">
+            Back to Dashboard
+        </a>
+    </div>
+
+    <div class="row g-4">
+        <!-- Add Material Form -->
+        <div class="col-lg-5">
+            <div class="custom-card p-4">
+                <h5 class="fw-bold mb-3">Upload Study Material</h5>
+                {% if form.errors %}
+                <div class="alert alert-danger py-2 small mb-3">
+                    <strong class="d-block mb-1"><i class="bi bi-exclamation-triangle-fill me-1"></i> Please correct the errors below:</strong>
+                    <ul class="mb-0 ps-3">
+                        {% for field in form %}
+                            {% for error in field.errors %}
+                                <li>{{ field.label }}: {{ error }}</li>
+                            {% endfor %}
+                        {% endfor %}
+                        {% for error in form.non_field_errors %}
+                            <li>{{ error }}</li>
+                        {% endfor %}
+                    </ul>
+                </div>
+                {% endif %}
+                <form method="POST" enctype="multipart/form-data">
+                    {% csrf_token %}
+                    <div class="mb-3">
+                        <label class="form-label fw-semibold">Subject</label>
+                        {{ form.subject }}
+                    </div>
+                    <div class="mb-3">
+                        <label class="form-label fw-semibold">Material Title</label>
+                        {{ form.title }}
+                    </div>
+                    <div class="mb-3">
+                        <label class="form-label fw-semibold">Type</label>
+                        {{ form.material_type }}
+                    </div>
+                    <div class="mb-3">
+                        <label class="form-label fw-semibold">Google Drive Link (Optional)</label>
+                        {{ form.drive_link }}
+                    </div>
+                    <div class="mb-3">
+                        <label class="form-label fw-semibold">Video Lecture Link (Optional)</label>
+                        {{ form.video_url }}
+                    </div>
+                    <div class="mb-3">
+                        <label class="form-label fw-semibold">Upload File (PDF, PPT, Doc)</label>
+                        {{ form.file_path }}
+                    </div>
+                    <div class="mb-3">
+                        <label class="form-label fw-semibold">Study Notes / Description</label>
+                        {{ form.description }}
+                    </div>
+                    <button type="submit" class="btn btn-primary w-100 fw-semibold">
+                        Upload Material
+                    </button>
+                </form>
+            </div>
+        </div>
+
+        <!-- Materials List -->
+        <div class="col-lg-7">
+            <div class="custom-card p-4">
+                <h5 class="fw-bold mb-3">All Materials ({{ materials.count }})</h5>
+                <div class="table-responsive">
+                    <table class="table table-hover align-middle small">
+                        <thead class="table-light">
+                            <tr>
+                                <th>Title</th>
+                                <th>Subject</th>
+                                <th>Type</th>
+                                <th>Date</th>
+                                <th>Actions</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            {% for m in materials %}
+                            <tr>
+                                <td><strong>{{ m.title }}</strong></td>
+                                <td>{{ m.subject.subject_name }}</td>
+                                <td><span class="badge bg-secondary text-uppercase">{{ m.material_type }}</span></td>
+                                <td>{{ m.created_at|date:"d M Y" }}</td>
+                                <td>
+                                    <a href="{% url 'admin_edit_material' m.material_id %}"
+                                        class="btn btn-sm btn-outline-primary py-0 px-2">Edit</a>
+                                    <a href="{% url 'admin_delete_material' m.material_id %}"
+                                        class="btn btn-sm btn-outline-danger py-0 px-2"
+                                        onclick="return confirm('Delete this material?');">Delete</a>
+                                </td>
+                            </tr>
+                            {% empty %}
+                            <tr>
+                                <td colspan="5" class="text-center py-3 text-muted">No materials uploaded yet.</td>
+                            </tr>
+                            {% endfor %}
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

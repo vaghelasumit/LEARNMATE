@@ -1,0 +1,650 @@
+/* 
+   LearnMate - Modern Royal Purple & Lavender UI Theme
+   Directly matching the design illustration:
+   1. Primary Royal Purple / Deep Violet: #4b23b1 (Brand, Action Buttons, Active Highlights)
+   2. Dark Royal Purple / Hover:          #38178a
+   3. Medium Purple Accent:               #6e44e6 (Subtle Glows, Gradients)
+   4. Soft Lavender Light Tint:           #ede8fc (Badges, Active Pills, Light Highlights)
+   5. Deep Midnight Violet Heading:       #1a1032 (Main Headings, Deep Contrast)
+   6. Soft Canvas Background:             #f2f5fd (Modern Soft Clean Canvas)
+   7. Pure Card White:                    #ffffff
+   8. Border Subtle Lavender:             #ded6f7
+*/
+
+:root {
+    --color-primary: #4b23b1;
+    --color-primary-dark: #38178a;
+    --color-primary-light: #ede8fc;
+    --color-accent-periwinkle: #6e44e6;
+    --color-dark-heading: #1a1032;
+    --color-body-text: #475569;
+    --color-muted-text: #6b7280;
+    --color-bg-canvas: #f2f5fd;
+    --color-card-surface: #ffffff;
+    --color-border: #ded6f7;
+
+    --primary-color: #4b23b1;
+    --primary-dark: #38178a;
+    --primary-light: #ede8fc;
+    --secondary-color: #64748b;
+    --accent-color: #6e44e6;
+    --success-color: #10b981;
+    --danger-color: #ef4444;
+    --warning-color: #f59e0b;
+
+    --background: #f2f5fd;
+    --card-bg: #ffffff;
+    --text-main: #1a1032;
+    --text-body: #475569;
+    --text-muted: #6b7280;
+    --border-color: #ded6f7;
+}
+
+body {
+    font-family: 'Segoe UI', -apple-system, BlinkMacSystemFont, Roboto, Helvetica, Arial, sans-serif;
+    background-color: var(--background);
+    color: var(--text-body);
+    min-height: 100vh;
+    display: flex;
+    flex-direction: column;
+}
+
+/* Typography */
+h1,
+h2,
+h3,
+h4,
+h5,
+h6 {
+    color: var(--color-dark-heading);
+    font-weight: 700;
+}
+
+a {
+    color: var(--color-primary);
+    text-decoration: none;
+    transition: color 0.2s ease;
+}
+
+a:hover {
+    color: var(--color-primary-dark);
+}
+
+/* Main Content Area */
+main {
+    flex: 1 0 auto;
+}
+
+/* Top Announcement Bar */
+.top-announcement-bar {
+    background: linear-gradient(90deg, #4b23b1 0%, #6842df 100%);
+    color: #ffffff;
+    font-size: 0.82rem;
+    padding: 7px 0;
+    letter-spacing: 0.3px;
+    font-weight: 500;
+}
+
+.top-announcement-bar a {
+    color: #ffffff;
+    text-decoration: underline;
+    font-weight: 600;
+}
+
+/* Navbar Customization - Vibrant Royal Purple Gradient */
+.navbar-custom {
+    background: linear-gradient(90deg, #4b23b1 0%, #5d35d2 50%, #7048e8 100%) !important;
+    border-bottom: 1px solid rgba(255, 255, 255, 0.15);
+    box-shadow: 0 4px 20px rgba(75, 35, 177, 0.25);
+    padding-top: 0.65rem;
+    padding-bottom: 0.65rem;
+}
+
+.navbar-custom .navbar-brand {
+    font-weight: 800;
+    color: #ffffff !important;
+    font-size: 1.45rem;
+    letter-spacing: -0.4px;
+    display: inline-flex;
+    align-items: center;
+}
+
+.navbar-custom .navbar-brand span.brand-accent {
+    color: #ffffff;
+}
+
+.navbar-custom .nav-link {
+    font-weight: 600;
+    color: rgba(255, 255, 255, 0.92) !important;
+    padding: 0.45rem 1rem !important;
+    position: relative;
+    border-radius: 20px;
+    transition: all 0.2s ease;
+    margin: 0 2px;
+}
+
+.navbar-custom .nav-link:hover {
+    color: #ffffff !important;
+    background-color: rgba(255, 255, 255, 0.2);
+}
+
+.navbar-custom .nav-link.active {
+    color: #ffffff !important;
+    background-color: rgba(255, 255, 255, 0.26);
+    font-weight: 700;
+}
+
+.navbar-custom .nav-link.active::after {
+    display: none;
+}
+
+/* Navbar Buttons */
+.navbar-custom .btn-outline-primary,
+.navbar-custom .btn-outline-light {
+    color: #ffffff !important;
+    border: 1.5px solid rgba(255, 255, 255, 0.9) !important;
+    background-color: transparent !important;
+    border-radius: 20px !important;
+    font-weight: 600;
+    padding: 0.35rem 1rem !important;
+    transition: all 0.2s ease;
+}
+
+.navbar-custom .btn-outline-primary:hover,
+.navbar-custom .btn-outline-light:hover {
+    background-color: #ffffff !important;
+    color: #4b23b1 !important;
+    border-color: #ffffff !important;
+}
+
+.navbar-custom .btn-warning,
+.navbar-custom .btn-primary,
+.navbar-custom .btn-light {
+    background-color: #ffffff !important;
+    border-color: #ffffff !important;
+    color: #4b23b1 !important;
+    font-weight: 700 !important;
+    border-radius: 20px !important;
+    padding: 0.35rem 1.15rem !important;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.12) !important;
+    transition: all 0.2s ease;
+}
+
+.navbar-custom .btn-warning:hover,
+.navbar-custom .btn-primary:hover,
+.navbar-custom .btn-light:hover {
+    background-color: #f3effe !important;
+    color: #38178a !important;
+    transform: translateY(-1px);
+}
+
+.navbar-custom .dropdown-toggle {
+    color: #ffffff !important;
+    font-weight: 600;
+}
+
+.navbar-custom .dropdown-menu {
+    border-radius: 12px;
+    border: 1px solid var(--border-color);
+    box-shadow: 0 10px 25px rgba(26, 16, 50, 0.12);
+    padding: 0.5rem;
+}
+
+.navbar-custom .dropdown-item {
+    font-weight: 500;
+    border-radius: 8px;
+    padding: 0.5rem 0.9rem;
+}
+
+.navbar-custom .dropdown-item:hover {
+    background-color: var(--color-primary-light);
+    color: var(--color-primary);
+}
+
+.navbar-custom .dropdown-item.text-danger:hover {
+    background-color: #fee2e2;
+    color: #dc2626 !important;
+}
+
+.navbar-custom .navbar-toggler {
+    border-color: rgba(255, 255, 255, 0.45);
+    padding: 4px 8px;
+}
+
+.navbar-custom .navbar-toggler-icon {
+    filter: brightness(0) invert(1);
+}
+
+/* Button Component Overrides */
+.btn-primary {
+    background-color: var(--color-primary) !important;
+    border-color: var(--color-primary) !important;
+    color: #ffffff !important;
+    font-weight: 600;
+    border-radius: 8px;
+    padding: 8px 18px;
+    transition: all 0.2s ease;
+    box-shadow: 0 4px 12px rgba(75, 35, 177, 0.25);
+}
+
+.btn-primary:hover,
+.btn-primary:focus,
+.btn-primary:active {
+    background-color: var(--color-primary-dark) !important;
+    border-color: var(--color-primary-dark) !important;
+    color: #ffffff !important;
+    box-shadow: 0 6px 16px rgba(75, 35, 177, 0.35);
+    transform: translateY(-1px);
+}
+
+.btn-outline-primary {
+    color: var(--color-primary) !important;
+    border-color: var(--color-primary) !important;
+    background-color: transparent !important;
+    font-weight: 600;
+    border-radius: 8px;
+    transition: all 0.2s ease;
+}
+
+.btn-outline-primary:hover,
+.btn-outline-primary:focus,
+.btn-outline-primary.active {
+    background-color: var(--color-primary) !important;
+    color: #ffffff !important;
+    border-color: var(--color-primary) !important;
+    box-shadow: 0 4px 12px rgba(75, 35, 177, 0.22);
+}
+
+.btn-secondary,
+.btn-outline-secondary {
+    color: var(--color-primary) !important;
+    border-color: var(--color-border) !important;
+    background-color: #ffffff !important;
+    font-weight: 600;
+    border-radius: 8px;
+    transition: all 0.2s ease;
+}
+
+.btn-secondary:hover,
+.btn-outline-secondary:hover {
+    background-color: var(--color-primary-light) !important;
+    border-color: var(--color-primary) !important;
+    color: var(--color-primary-dark) !important;
+}
+
+.btn-warning {
+    background-color: #f59e0b !important;
+    border-color: #f59e0b !important;
+    color: #ffffff !important;
+    font-weight: 600;
+}
+
+.btn-warning:hover {
+    background-color: #d97706 !important;
+    border-color: #d97706 !important;
+}
+
+/* Badges & Accents */
+.badge.bg-primary {
+    background-color: var(--color-primary) !important;
+    color: #ffffff !important;
+}
+
+.badge.bg-primary-subtle {
+    background-color: var(--color-primary-light) !important;
+    color: var(--color-primary) !important;
+    font-weight: 600;
+}
+
+.badge.bg-success {
+    background-color: #10b981 !important;
+    color: #ffffff !important;
+}
+
+.badge.bg-danger {
+    background-color: #ef4444 !important;
+    color: #ffffff !important;
+}
+
+/* Utilities */
+.text-primary {
+    color: var(--color-primary) !important;
+}
+
+.bg-primary {
+    background-color: var(--color-primary) !important;
+}
+
+.bg-light-tint {
+    background-color: var(--color-primary-light) !important;
+}
+
+/* Form Inputs */
+.form-control:focus,
+.form-select:focus {
+    border-color: var(--color-primary) !important;
+    box-shadow: 0 0 0 0.2rem rgba(75, 35, 177, 0.18) !important;
+}
+
+/* Stat Cards for Dashboard */
+.stat-box {
+    background: #ffffff;
+    border: 1.5px solid var(--border-color);
+    border-radius: 12px;
+    padding: 22px;
+    text-align: center;
+    box-shadow: 0 2px 10px rgba(75, 35, 177, 0.04);
+    transition: transform 0.25s ease, box-shadow 0.25s ease, border-color 0.25s ease;
+}
+
+.stat-box:hover {
+    transform: translateY(-3px);
+    box-shadow: 0 8px 20px rgba(75, 35, 177, 0.09);
+    border-color: var(--color-primary);
+}
+
+.stat-box .stat-number {
+    font-size: 2.3rem;
+    font-weight: 800;
+    color: var(--color-primary);
+    margin-bottom: 5px;
+}
+
+.stat-box .stat-label {
+    font-size: 0.88rem;
+    color: var(--color-muted-text);
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+}
+
+/* Custom Cards System */
+.custom-card {
+    background: #ffffff;
+    border: 1.5px solid var(--border-color);
+    border-radius: 12px;
+    box-shadow: 0 2px 10px rgba(75, 35, 177, 0.04);
+    margin-bottom: 20px;
+}
+
+.custom-card-header {
+    background: #ffffff;
+    border-bottom: 1.5px solid var(--border-color);
+    padding: 16px 22px;
+    font-weight: 700;
+    font-size: 1.15rem;
+    color: var(--color-dark-heading);
+}
+
+/* Tables */
+.table thead.table-light th {
+    background-color: var(--color-primary-light);
+    color: var(--color-dark-heading);
+    font-weight: 700;
+    border-bottom: 2px solid var(--border-color);
+}
+
+.table tbody tr:hover {
+    background-color: rgba(75, 35, 177, 0.03);
+}
+
+/* Flashcard 3D Flip Feature */
+.flashcard-container {
+    perspective: 1000px;
+    max-width: 600px;
+    margin: 20px auto;
+}
+
+.flashcard {
+    width: 100%;
+    min-height: 280px;
+    position: relative;
+    transform-style: preserve-3d;
+    transition: transform 0.6s ease;
+    cursor: pointer;
+    border-radius: 14px;
+    box-shadow: 0 8px 24px rgba(75, 35, 177, 0.1);
+}
+
+.flashcard.flipped {
+    transform: rotateY(180deg);
+}
+
+.card-face {
+    position: absolute;
+    width: 100%;
+    height: 100%;
+    backface-visibility: hidden;
+    border-radius: 14px;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    padding: 30px;
+    text-align: center;
+    border: 2px solid var(--border-color);
+}
+
+.card-front {
+    background-color: #ffffff;
+    color: var(--color-dark-heading);
+}
+
+.card-back {
+    background: linear-gradient(135deg, #4b23b1 0%, #38178a 100%);
+    color: #ffffff;
+    transform: rotateY(180deg);
+    border-color: #4b23b1;
+}
+
+.card-badge {
+    position: absolute;
+    top: 15px;
+    left: 20px;
+    font-size: 0.8rem;
+    text-transform: uppercase;
+    font-weight: 700;
+    padding: 4px 12px;
+    border-radius: 20px;
+    background-color: var(--color-primary-light);
+    color: var(--color-primary);
+}
+
+/* Quiz UI */
+.quiz-option-label {
+    display: block;
+    padding: 14px 20px;
+    border: 1.5px solid var(--border-color);
+    border-radius: 10px;
+    background-color: #ffffff;
+    cursor: pointer;
+    transition: all 0.2s ease;
+    margin-bottom: 12px;
+}
+
+.quiz-option-label:hover {
+    background-color: var(--color-primary-light);
+    border-color: var(--color-primary);
+}
+
+.quiz-option-label input[type="radio"]:checked+.option-text {
+    font-weight: 700;
+    color: var(--color-primary);
+}
+
+/* Certificate Layout */
+.certificate-frame {
+    border: 12px solid var(--color-primary);
+    padding: 40px;
+    background-color: #ffffff !important;
+    background-image: none !important;
+    position: relative;
+    max-width: 900px;
+    margin: 20px auto;
+    box-shadow: 0 12px 30px rgba(75, 35, 177, 0.12);
+}
+
+.certificate-inner-border {
+    border: 2px solid #7048e8;
+    background-color: #ffffff !important;
+    background-image: none !important;
+    padding: 30px;
+    text-align: center;
+}
+
+/* Print Rules for Certificate */
+@media print {
+    body * {
+        visibility: hidden;
+    }
+
+    .certificate-frame,
+    .certificate-frame * {
+        visibility: visible;
+    }
+
+    .certificate-frame {
+        position: absolute;
+        left: 0;
+        top: 0;
+        width: 100%;
+        margin: 0;
+        border: 10px solid var(--color-primary);
+    }
+
+    .no-print {
+        display: none !important;
+    }
+}
+
+/* Footer Styling */
+footer {
+    background-color: var(--color-dark-heading);
+    color: #e2e8f0;
+    padding: 30px 0;
+    font-size: 0.92rem;
+    margin-top: auto;
+}
+
+footer a {
+    color: #9d80f8;
+    text-decoration: none;
+}
+
+footer a:hover {
+    color: #ffffff;
+    text-decoration: underline;
+}
+
+/* Subject Featured Cards */
+.card {
+    border-color: var(--border-color) !important;
+}
+
+.card .btn-outline-primary {
+    border-color: var(--color-primary) !important;
+    color: var(--color-primary) !important;
+}
+
+.card .btn-outline-primary:hover {
+    background-color: var(--color-primary) !important;
+    color: #ffffff !important;
+}
+
+.badge-subject {
+    background-color: var(--color-primary) !important;
+    color: #ffffff !important;
+}
+
+/* ========================================================
+   BOOKMARK STYLING & ANIMATIONS
+   ======================================================== */
+.bookmark-toggle-btn {
+    transition: all 0.2s ease-in-out;
+}
+
+.bookmark-toggle-btn:active {
+    transform: scale(0.95);
+}
+
+/* Floating Corner Bookmark Button (for cards & flashcards) */
+.card-bookmark-corner {
+    position: absolute;
+    top: 12px;
+    right: 12px;
+    z-index: 10;
+    width: 36px;
+    height: 36px;
+    border-radius: 50%;
+    background-color: rgba(255, 255, 255, 0.95);
+    border: 1px solid rgba(0, 0, 0, 0.08);
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.12);
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    font-size: 1rem;
+    color: #94a3b8;
+    transition: all 0.25s cubic-bezier(0.4, 0, 0.2, 1);
+    backdrop-filter: blur(4px);
+}
+
+.card-bookmark-corner:hover {
+    transform: scale(1.12);
+    color: #eab308;
+    box-shadow: 0 4px 12px rgba(234, 179, 8, 0.25);
+    background-color: #ffffff;
+}
+
+.card-bookmark-corner.active,
+.card-bookmark-corner.is-bookmarked {
+    color: #eab308;
+    background-color: #fffbeb;
+    border-color: #fde047;
+    box-shadow: 0 3px 10px rgba(234, 179, 8, 0.28);
+}
+
+/* Bookmark item card animations */
+.bookmark-item-card {
+    transition: transform 0.25s ease, box-shadow 0.25s ease, opacity 0.3s ease;
+}
+
+.bookmark-item-card:hover {
+    transform: translateY(-3px);
+    box-shadow: 0 10px 25px rgba(75, 35, 177, 0.08) !important;
+}
+
+.bookmark-item-card.removing {
+    opacity: 0;
+    transform: scale(0.9);
+    pointer-events: none;
+}
+
+/* Filter pills on Bookmarks page */
+.bookmark-filter-btn {
+    border-radius: 20px;
+    padding: 6px 16px;
+    font-size: 0.88rem;
+    font-weight: 600;
+    border: 1.5px solid var(--border-color);
+    background-color: #ffffff;
+    color: var(--color-body-text);
+    transition: all 0.2s ease;
+}
+
+.bookmark-filter-btn:hover {
+    border-color: var(--color-primary);
+    color: var(--color-primary);
+    background-color: var(--color-primary-light);
+}
+
+.bookmark-filter-btn.active {
+    background-color: var(--color-primary);
+    color: #ffffff;
+    border-color: var(--color-primary);
+    box-shadow: 0 4px 12px rgba(75, 35, 177, 0.2);
+}
+
+.bookmark-filter-btn .badge {
+    transition: background-color 0.2s ease;
+}

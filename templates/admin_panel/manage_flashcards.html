@@ -1,0 +1,66 @@
+{% extends 'base.html' %}
+
+{% block title %}Manage Flashcards - Admin{% endblock %}
+
+{% block content %}
+<div class="container py-3">
+    <!-- Header -->
+    <div class="d-flex justify-content-between align-items-center mb-4 flex-wrap gap-2">
+        <div>
+            <h3 class="fw-bold mb-1">Manage Flashcards</h3>
+            <p class="text-muted small mb-0">Select a subject to view, create, edit, or delete its flashcards</p>
+        </div>
+        <a href="{% url 'admin_dashboard' %}" class="btn btn-outline-secondary btn-sm">
+            Back to Dashboard
+        </a>
+    </div>
+
+    <!-- Subjects List Table (View First Subject) -->
+    <div class="custom-card p-4">
+        <div class="d-flex justify-content-between align-items-center mb-3 flex-wrap gap-2">
+            <h5 class="fw-bold mb-0">Select Subject</h5>
+            <span class="text-muted small">Total Flashcards Across All Subjects: <strong>{{ total_flashcards }}</strong></span>
+        </div>
+        <div class="table-responsive">
+            <table class="table table-hover align-middle mb-0">
+                <thead class="table-light">
+                    <tr>
+                        <th style="width: 8%;">#</th>
+                        <th style="width: 50%;">Subject Name</th>
+                        <th style="width: 22%;">Flashcards</th>
+                        <th class="text-end" style="width: 20%;">Action</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for s in subjects %}
+                    <tr>
+                        <td class="text-muted">{{ forloop.counter }}</td>
+                        <td>
+                            <a href="{% url 'admin_subject_flashcards' s.subject_id %}" class="fw-bold text-dark text-decoration-none">
+                                {{ s.subject_name }}
+                            </a>
+                        </td>
+                        <td>
+                            <span class="badge bg-secondary-subtle text-secondary fw-semibold">
+                                {{ s.card_count }} Flashcard{{ s.card_count|pluralize }}
+                            </span>
+                        </td>
+                        <td class="text-end">
+                            <a href="{% url 'admin_subject_flashcards' s.subject_id %}" class="btn btn-sm btn-primary">
+                                View Flashcards →
+                            </a>
+                        </td>
+                    </tr>
+                    {% empty %}
+                    <tr>
+                        <td colspan="4" class="text-center py-4 text-muted">
+                            No subjects found. Please create subjects in the <a href="{% url 'admin_manage_courses' %}">Subjects</a> section first.
+                        </td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+    </div>
+</div>
+{% endblock %}

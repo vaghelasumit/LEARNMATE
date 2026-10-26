@@ -1,0 +1,62 @@
+{% extends 'base.html' %}
+
+{% block title %}Quiz History - LearnMate{% endblock %}
+
+{% block content %}
+<div class="container py-3">
+    <div class="custom-card p-4">
+        <div class="d-flex justify-content-between align-items-center mb-4">
+            <div>
+                <h3 class="fw-bold mb-1">My Quiz History</h3>
+                <p class="text-muted small mb-0">Record of all past quizzes and test attempts</p>
+            </div>
+            <a href="{% url 'courses' %}" class="btn btn-primary btn-sm">Take More Quizzes</a>
+        </div>
+
+        <div class="table-responsive">
+            <table class="table table-hover align-middle">
+                <thead class="table-light">
+                    <tr>
+                        <th># Attempt</th>
+                        <th>Subject</th>
+                        <th>Quiz Title</th>
+                        <th>Score</th>
+                        <th>Percentage</th>
+                        <th>Status</th>
+                        <th>Date & Time</th>
+                        <th>Action</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for res in results %}
+                    <tr>
+                        <td>#{{ res.attempt.attempt_id }}</td>
+                        <td><strong>{{ res.quiz.subject.subject_name }}</strong></td>
+                        <td>{{ res.quiz.quiz_title }}</td>
+                        <td>{{ res.score }} / {{ res.total_marks }}</td>
+                        <td>{{ res.percentage }}%</td>
+                        <td>
+                            <span class="badge {% if res.result_status == 'Pass' %}bg-success{% else %}bg-danger{% endif %}">
+                                {{ res.result_status }}
+                            </span>
+                        </td>
+                        <td>{{ res.result_date|date:"d M Y, h:i A" }}</td>
+                        <td>
+                            <a href="{% url 'quiz_result' res.result_id %}" class="btn btn-outline-primary btn-sm">
+                                View
+                            </a>
+                        </td>
+                    </tr>
+                    {% empty %}
+                    <tr>
+                        <td colspan="8" class="text-center py-4 text-muted">
+                            No quiz attempts yet. Browse a subject and test your knowledge!
+                        </td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+    </div>
+</div>
+{% endblock %}

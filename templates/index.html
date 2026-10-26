@@ -1,0 +1,75 @@
+{% extends 'base.html' %}
+
+{% block title %}LearnMate - Home{% endblock %}
+
+{% block content %}
+<div class="container py-2">
+    <!-- Hero Banner (Royal Purple & Soft Lavender Style) -->
+    <div class="p-5 mb-5 rounded-4 shadow-sm text-center position-relative overflow-hidden" 
+         style="background: linear-gradient(135deg, var(--color-primary-light) 0%, #f7f5ff 100%); border: 1.5px solid var(--color-border);">
+        <div class="container-fluid py-4 position-relative" style="z-index: 2;">
+            <span class="badge text-uppercase fw-bold mb-3 px-3 py-2 shadow-sm" 
+                  style="background-color: var(--color-primary); color: #ffffff; letter-spacing: 0.8px; font-size: 0.78rem; border-radius: 20px;">
+                E - LEARNING PLATFORM
+            </span>
+            <h1 class="display-4 fw-bold mb-3" style="color: var(--color-dark-heading); letter-spacing: -0.5px;">
+                Let's <span style="color: var(--color-primary);">E-learn</span> at your home
+            </h1>
+            <p class="col-md-8 fs-5 mx-auto mb-4" style="color: var(--color-body-text); font-weight: 400;">
+                Organized study materials, digital flashcards, practice quizzes, and automated mistake-based revision.
+            </p>
+            <div class="d-flex justify-content-center gap-3 flex-wrap">
+                {% if not user.is_authenticated %}
+                    <a href="{% url 'signup' %}" class="btn btn-lg px-4 fw-bold shadow-sm" 
+                       style="background-color: var(--color-primary); color: #ffffff; border-radius: 50px; font-size: 0.95rem; border: none; padding: 12px 28px;">
+                        Get Started
+                    </a>
+                    <a href="{% url 'courses' %}" class="btn btn-lg px-4 fw-bold" 
+                       style="background-color: #ffffff; color: var(--color-primary); border-radius: 50px; font-size: 0.95rem; border: 1.5px solid var(--color-border); padding: 12px 28px;">
+                        Explore Subjects
+                    </a>
+                {% else %}
+                    <a href="{% url 'dashboard' %}" class="btn btn-lg px-4 fw-bold shadow-sm" 
+                       style="background-color: var(--color-primary); color: #ffffff; border-radius: 50px; font-size: 0.95rem; border: none; padding: 12px 28px;">
+                        Go to Dashboard
+                    </a>
+                    <a href="{% url 'courses' %}" class="btn btn-lg px-4 fw-bold" 
+                       style="background-color: #ffffff; color: var(--color-primary); border-radius: 50px; font-size: 0.95rem; border: 1.5px solid var(--color-border); padding: 12px 28px;">
+                        Browse Subjects
+                    </a>
+                {% endif %}
+            </div>
+        </div>
+    </div>
+
+    <!-- Stats Section -->
+    <div class="row g-3 mb-5">
+        <div class="col-md-3 col-6">
+            <div class="stat-box">
+                <div class="stat-number">{{ total_subjects }}</div>
+                <div class="stat-label">Subjects Available</div>
+            </div>
+        </div>
+        <div class="col-md-3 col-6">
+            <div class="stat-box">
+                <div class="stat-number">{{ total_materials }}</div>
+                <div class="stat-label">Study Materials</div>
+            </div>
+        </div>
+        <div class="col-md-3 col-6">
+            <div class="stat-box">
+                <div class="stat-number">{{ total_flashcards }}</div>
+                <div class="stat-label">Digital Flashcards</div>
+            </div>
+        </div>
+        <div class="col-md-3 col-6">
+            <div class="stat-box">
+                <div class="stat-number">{{ total_quizzes }}</div>
+                <div class="stat-label">Practice Quizzes</div>
+            </div>
+        </div>
+    </div>
+
+
+</div>
+{% endblock %}

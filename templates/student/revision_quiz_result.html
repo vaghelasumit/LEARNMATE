@@ -1,0 +1,135 @@
+{% extends 'base.html' %}
+
+{% block title %}Revision Quiz Results - {{ subject.subject_name }}{% endblock %}
+
+{% block content %}
+<div class="container py-3">
+    <div class="row justify-content-center">
+        <div class="col-lg-8">
+            <!-- Breadcrumb -->
+            <nav aria-label="breadcrumb" class="mb-3">
+                <ol class="breadcrumb small">
+                    <li class="breadcrumb-item"><a href="{% url 'home' %}">Home</a></li>
+                    <li class="breadcrumb-item"><a href="{% url 'courses' %}">Subjects</a></li>
+                    <li class="breadcrumb-item"><a href="{% url 'course_detail' subject.subject_id %}">{{ subject.subject_name }}</a></li>
+                    <li class="breadcrumb-item"><a href="{% url 'revision_hub' %}?subject_id={{ subject.subject_id }}">Revision</a></li>
+                    <li class="breadcrumb-item active">Results</li>
+                </ol>
+            </nav>
+
+            <!-- Result Summary Card -->
+            <div class="custom-card p-4 text-center mb-4 shadow-sm border-2 {% if all_mastered %}border-success{% else %}border-warning{% endif %}">
+                <div class="mb-3">
+                    {% if all_mastered %}
+                                                <h3 class="fw-bold text-success mb-1">All Mistakes Mastered!</h3>
+                        <p class="text-muted">Incredible work! You answered every question correctly and fully mastered your revision items for <strong>{{ subject.subject_name }}</strong>.</p>
+                    {% else %}
+                                                <h3 class="fw-bold text-dark mb-1">Revision Practice Complete</h3>
+                        <p class="text-muted">You practiced your mistakes for <strong>{{ subject.subject_name }}</strong>. Keep practicing until all questions are mastered!</p>
+                    {% endif %}
+                </div>
+
+                <div class="row g-3 justify-content-center my-3">
+                    <div class="col-md-4">
+                        <div class="p-3 bg-light rounded border">
+                            <span class="text-muted small d-block">Score</span>
+                            <span class="fs-3 fw-bold text-dark">{{ score }} / {{ total }}</span>
+                        </div>
+                    </div>
+                    <div class="col-md-4">
+                        <div class="p-3 bg-light rounded border">
+                            <span class="text-muted small d-block">Accuracy</span>
+                            <span class="fs-3 fw-bold {% if percentage >= 80 %}text-success{% elif percentage >= 50 %}text-warning{% else %}text-danger{% endif %}">{{ percentage }}%</span>
+                        </div>
+                    </div>
+                    <div class="col-md-4">
+                        <div class="p-3 bg-light rounded border">
+                            <span class="text-muted small d-block">Status</span>
+                            <span class="fs-4 fw-bold {% if all_mastered %}text-success{% else %}text-warning{% endif %}">
+                                {% if all_mastered %}Mastered ✓{% else %}In Progress{% endif %}
+                            </span>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="d-flex justify-content-center gap-3 mt-4 flex-wrap">
+                    <a href="{% url 'revision_hub' %}?subject_id={{ subject.subject_id }}" class="btn btn-primary px-4 fw-semibold shadow-sm">
+                        Back to Revision
+                    </a>
+                    {% if not all_mastered %}
+                    <a href="{% url 'take_revision_quiz' subject.subject_id %}" class="btn btn-warning px-4 fw-semibold shadow-sm">
+                        Retake Quiz
+                    </a>
+                    {% endif %}
+                    <a href="{% url 'course_detail' subject.subject_id %}" class="btn btn-outline-secondary px-4">
+                        Subject Overview
+                    </a>
+                </div>
+            </div>
+
+            <!-- Detailed Question-by-Question Review -->
+            <div class="custom-card p-4 shadow-sm mb-4">
+                <h4 class="fw-bold mb-4 text-dark">Question Review</h4>
+
+                {% for item in results %}
+                <div class="border rounded p-3 mb-3 {% if item.is_correct %}bg-success-subtle border-success{% else %}bg-danger-subtle border-danger{% endif %}">
+                    <div class="d-flex justify-content-between align-items-center mb-2">
+                        <span class="badge bg-secondary">Question {{ forloop.counter }}</span>
+                        {% if item.is_correct %}
+                            <span class="badge bg-success">Mastered ✓</span>
+                        {% else %}
+                            <span class="badge bg-danger">Still Needs Practice</span>
+                        {% endif %}
+                    </div>
+
+                    <h5 class="fw-bold text-dark mb-3">{{ item.question.question_text }}</h5>
+
+                    <!-- MCQ Options -->
+                    <div class="list-group mb-3 small">
+                        <div class="list-group-item {% if item.question.correct_answer == 'A' %}bg-success-subtle border-success fw-bold text-success{% elif item.selected_answer == 'A' and not item.is_correct %}bg-danger-subtle border-danger text-danger{% endif %}">
+                            <strong>A.</strong> {{ item.question.option_a }}
+                            {% if item.question.correct_answer == 'A' %}<span class="badge bg-success float-end">Correct</span>{% endif %}
+                            {% if item.selected_answer == 'A' and not item.is_correct %}<span class="badge bg-danger float-end">Your Choice</span>{% endif %}
+                        </div>
+                        <div class="list-group-item {% if item.question.correct_answer == 'B' %}bg-success-subtle border-success fw-bold text-success{% elif item.selected_answer == 'B' and not item.is_correct %}bg-danger-subtle border-danger text-danger{% endif %}">
+                            <strong>B.</strong> {{ item.question.option_b }}
+                            {% if item.question.correct_answer == 'B' %}<span class="badge bg-success float-end">Correct</span>{% endif %}
+                            {% if item.selected_answer == 'B' and not item.is_correct %}<span class="badge bg-danger float-end">Your Choice</span>{% endif %}
+                        </div>
+                        <div class="list-group-item {% if item.question.correct_answer == 'C' %}bg-success-subtle border-success fw-bold text-success{% elif item.selected_answer == 'C' and not item.is_correct %}bg-danger-subtle border-danger text-danger{% endif %}">
+                            <strong>C.</strong> {{ item.question.option_c }}
+                            {% if item.question.correct_answer == 'C' %}<span class="badge bg-success float-end">Correct</span>{% endif %}
+                            {% if item.selected_answer == 'C' and not item.is_correct %}<span class="badge bg-danger float-end">Your Choice</span>{% endif %}
+                        </div>
+                        <div class="list-group-item {% if item.question.correct_answer == 'D' %}bg-success-subtle border-success fw-bold text-success{% elif item.selected_answer == 'D' and not item.is_correct %}bg-danger-subtle border-danger text-danger{% endif %}">
+                            <strong>D.</strong> {{ item.question.option_d }}
+                            {% if item.question.correct_answer == 'D' %}<span class="badge bg-success float-end">Correct</span>{% endif %}
+                            {% if item.selected_answer == 'D' and not item.is_correct %}<span class="badge bg-danger float-end">Your Choice</span>{% endif %}
+                        </div>
+                    </div>
+
+                    <!-- Answers comparison -->
+                    <div class="p-2 mb-2 rounded bg-white border small">
+                        <div class="d-flex justify-content-between mb-1">
+                            <span><strong>Your Answer:</strong> Option {{ item.selected_answer|default:"None" }}</span>
+                            <span class="badge {% if item.is_correct %}bg-success{% else %}bg-danger{% endif %}">
+                                {% if item.is_correct %}Correct{% else %}Incorrect{% endif %}
+                            </span>
+                        </div>
+                        <div class="text-success fw-semibold">
+                            <strong>Correct Answer:</strong> Option {{ item.question.correct_answer }}
+                        </div>
+                    </div>
+
+                    {% if item.question.explanation %}
+                    <div class="p-2 rounded bg-light border small text-muted">
+                        <strong class="text-dark">Explanation:</strong> {{ item.question.explanation }}
+                    </div>
+                    {% endif %}
+                </div>
+                {% endfor %}
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

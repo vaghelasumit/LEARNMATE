@@ -1,0 +1,250 @@
+{% extends 'base.html' %}
+
+{% block title %}{{ subject.subject_name }} - LearnMate{% endblock %}
+
+{% block content %}
+<div class="container">
+    <!-- Course Header Banner -->
+    <div class="bg-white border rounded p-4 mb-4 shadow-sm">
+        <div class="d-flex justify-content-between align-items-center flex-wrap gap-2">
+            <div>
+                <nav aria-label="breadcrumb">
+                    <ol class="breadcrumb mb-1 small">
+                        <li class="breadcrumb-item"><a href="{% url 'courses' %}">Subjects</a></li>
+                        <li class="breadcrumb-item active">{{ subject.subject_name }}</li>
+                    </ol>
+                </nav>
+                <h2 class="fw-bold mb-0 text-dark">{{ subject.subject_name }}</h2>
+            </div>
+            <div class="d-flex align-items-center gap-2 flex-wrap">
+                <!-- Bookmark Subject Button -->
+                <button class="btn btn-sm bookmark-toggle-btn {% if is_subject_bookmarked %}btn-warning{% else %}btn-outline-warning{% endif %}"
+                        data-type="subject" data-id="{{ subject.subject_id }}"
+                        data-label-active="Subject Bookmarked" data-label-inactive="Bookmark Subject">
+                    <i class="bi {% if is_subject_bookmarked %}bi-bookmark-fill{% else %}bi-bookmark{% endif %} me-1"></i>
+                    <span>{% if is_subject_bookmarked %}Subject Bookmarked{% else %}Bookmark Subject{% endif %}</span>
+                </button>
+
+                {% if certificate %}
+                <a href="{% url 'view_certificate' certificate.certificate_no %}" class="btn btn-success btn-sm">
+                    View Certificate
+                </a>
+                {% elif has_passed_quiz %}
+                <span class="badge bg-warning text-dark border p-2">
+                    Quiz Passed • Certificate Pending Admin Generation
+                </span>
+                {% else %}
+                <span class="badge bg-light text-muted border p-2">
+                    Pass quiz to request certificate
+                </span>
+                {% endif %}
+            </div>
+        </div>
+    </div>
+
+    <!-- Navigation Tabs (Faithful to Sketch 4: Study material | Flashcard | Quiz | Revision) -->
+    <ul class="nav nav-tabs mb-4" id="courseTab" role="tablist">
+        <li class="nav-item" role="presentation">
+            <button class="nav-link active fw-semibold" id="material-tab" data-bs-toggle="tab"
+                data-bs-target="#material-pane" type="button" role="tab">
+                Study Material
+            </button>
+        </li>
+        <li class="nav-item" role="presentation">
+            <button class="nav-link fw-semibold" id="flashcard-tab" data-bs-toggle="tab"
+                data-bs-target="#flashcard-pane" type="button" role="tab">
+                Flashcards
+            </button>
+        </li>
+        <li class="nav-item" role="presentation">
+            <button class="nav-link fw-semibold" id="quiz-tab" data-bs-toggle="tab" data-bs-target="#quiz-pane"
+                type="button" role="tab">
+                Quizzes
+            </button>
+        </li>
+    </ul>
+
+    <!-- Tab Contents -->
+    <div class="tab-content" id="courseTabContent">
+
+        <!-- TAB 1: STUDY MATERIAL -->
+        <div class="tab-pane fade show active" id="material-pane" role="tabpanel">
+            <div class="custom-card p-4">
+                <div class="d-flex justify-content-between align-items-center mb-3">
+                    <h5 class="fw-bold mb-0">Study Notes & Subject Handouts</h5>
+                </div>
+                <div class="list-group">
+                    {% for mat in materials %}
+                    <div
+                        class="list-group-item list-group-item-action d-flex justify-content-between align-items-center p-3 flex-wrap gap-2">
+                        <div class="me-3">
+                            <span
+                                class="badge {% if mat.material_type == 'pdf' %}bg-danger{% elif mat.material_type == 'ppt' %}bg-warning text-dark{% elif mat.material_type == 'video' %}bg-info text-dark{% else %}bg-secondary{% endif %} me-1 text-uppercase">
+                                {{ mat.material_type }}
+                            </span>
+                            {% if mat.drive_link %}
+                            <span class="badge bg-success me-1">Drive</span>
+                            {% endif %}
+                            {% if mat.video_url %}
+                            <span class="badge bg-danger me-1">Video</span>
+                            {% endif %}
+                            <strong class="fs-6 d-block mt-1">{{ mat.title }}</strong>
+                        </div>
+                        <div class="d-flex gap-2 flex-shrink-0 flex-wrap">
+                            {% if mat.video_url %}
+                            <a href="{{ mat.video_url }}" target="_blank" class="btn btn-outline-danger btn-sm">
+                                Video
+                            </a>
+                            {% endif %}
+                            {% if mat.drive_link %}
+                            <a href="{{ mat.drive_link }}" target="_blank" class="btn btn-outline-success btn-sm">
+                                Drive
+                            </a>
+                            {% endif %}
+                            <!-- Bookmark Button -->
+                            <button
+                                class="btn btn-sm bookmark-toggle-btn {% if mat.material_id in bookmarked_material_ids %}btn-warning{% else %}btn-outline-warning{% endif %}"
+                                data-type="material" data-id="{{ mat.material_id }}">
+                                <i class="bi {% if mat.material_id in bookmarked_material_ids %}bi-bookmark-fill{% else %}bi-bookmark{% endif %} me-1"></i>
+                                <span>{% if mat.material_id in bookmarked_material_ids %}Bookmarked{% else %}Bookmark{% endif %}</span>
+                            </button>
+                            <a href="{% url 'study_material_view' mat.material_id %}"
+                                class="btn btn-outline-primary btn-sm">
+                                Read
+                            </a>
+                            {% if mat.file_path %}
+                            <a href="{{ mat.file_path.url }}" class="btn btn-outline-secondary btn-sm" download>
+                                Download
+                            </a>
+                            {% endif %}
+                        </div>
+                    </div>
+                    {% empty %}
+                    <p class="text-muted text-center py-4">No study materials uploaded for this subject yet.</p>
+                    {% endfor %}
+                </div>
+            </div>
+        </div>
+
+        <!-- TAB 2: FLASHCARDS (Interactive 3D Flip Player matching screenshot & Sketch 4) -->
+        <div class="tab-pane fade" id="flashcard-pane" role="tabpanel">
+            <div class="custom-card p-4 text-center">
+                <h3 class="fw-bold mb-1 text-dark">{{ subject.subject_name }} Flashcards</h3>
+                <p class="text-muted small mb-3">Click on the card or the 'Flip Card' button to reveal the answer.</p>
+
+                {% if total_cards > 0 %}
+                <!-- Card Counter Badge -->
+                <span id="card-counter" class="badge bg-secondary mb-3 px-3 py-2 fs-6">
+                    Card 1 of {{ total_cards }}
+                </span>
+
+                <!-- 3D Flip Flashcard -->
+                <div class="flashcard-container position-relative">
+                    <!-- Floating Corner Star Bookmark Button -->
+                    <button id="card-corner-bookmark" class="card-bookmark-corner bookmark-toggle-btn {% if flashcards.first.flashcard_id in bookmarked_flashcard_ids %}active is-bookmarked{% endif %}"
+                            data-type="flashcard" data-id="{{ flashcards.first.flashcard_id }}" title="Bookmark this flashcard">
+                        <i class="bi {% if flashcards.first.flashcard_id in bookmarked_flashcard_ids %}bi-star-fill text-warning{% else %}bi-star text-muted{% endif %}"></i>
+                    </button>
+                    <div class="flashcard" id="flashcard-card">
+                        <!-- Front Face: Question -->
+                        <div class="card-face card-front">
+                            <span class="card-badge bg-primary text-white">Question</span>
+                            <h4 class="fw-bold px-3 text-dark" id="card-question-text" style="line-height: 1.6;">
+                                <!-- Injected by JavaScript -->
+                            </h4>
+                            <span class="text-muted small mt-3">Click anywhere to flip</span>
+                        </div>
+
+                        <!-- Back Face: Answer -->
+                        <div class="card-face card-back">
+                            <span class="card-badge bg-success text-white">Answer / Explanation</span>
+                            <div class="px-3" id="card-answer-text"
+                                style="font-size: 1.15rem; line-height: 1.6; white-space: pre-line;">
+                                <!-- Injected by JavaScript -->
+                            </div>
+                            <span class="text-light-50 small mt-3">Click to flip back</span>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Controls: Previous, Flip Card, Bookmark, Next -->
+                <div class="d-flex justify-content-center flex-wrap gap-3 mt-4">
+                    <button id="card-prev-btn" class="btn btn-outline-secondary px-4 py-2 fw-semibold">
+                        Previous
+                    </button>
+                    <button id="card-flip-btn" class="btn btn-primary px-4 py-2 fw-semibold">
+                        Flip Card
+                    </button>
+                    <button id="card-bookmark-btn" class="btn {% if flashcards.first.flashcard_id in bookmarked_flashcard_ids %}btn-warning{% else %}btn-outline-warning{% endif %} px-4 py-2 fw-semibold bookmark-toggle-btn"
+                            data-type="flashcard" data-id="{{ flashcards.first.flashcard_id }}">
+                        <i class="bi {% if flashcards.first.flashcard_id in bookmarked_flashcard_ids %}bi-bookmark-fill{% else %}bi-bookmark{% endif %} me-1"></i>
+                        <span>{% if flashcards.first.flashcard_id in bookmarked_flashcard_ids %}Bookmarked{% else %}Bookmark Card{% endif %}</span>
+                    </button>
+                    <button id="card-next-btn" class="btn btn-outline-secondary px-4 py-2 fw-semibold">
+                        Next
+                    </button>
+                </div>
+                {% else %}
+                <div class="alert alert-info mt-3">
+                    No flashcards created for this subject yet.
+                </div>
+                {% endif %}
+            </div>
+        </div>
+
+        <!-- TAB 3: QUIZZES -->
+        <div class="tab-pane fade" id="quiz-pane" role="tabpanel">
+            <div class="custom-card p-4">
+                <h5 class="fw-bold mb-3">Subject Quizzes & Assessments</h5>
+                <div class="row g-3">
+                    {% for quiz in quizzes %}
+                    <div class="col-md-6">
+                        <div class="border rounded p-3 bg-light d-flex justify-content-between align-items-center">
+                            <div>
+                                <h6 class="fw-bold mb-1">{{ quiz.quiz_title }}</h6>
+                                <div class="text-muted small">
+                                    <span>{{ quiz.questions.count }} Questions</span> •
+                                    <span>Passing Score: {{ quiz.passing_marks }}/{{ quiz.questions.count }}</span>
+                                </div>
+                            </div>
+                            <div>
+                                <a href="{% url 'take_quiz' quiz.quiz_id %}" class="btn btn-primary btn-sm px-3">
+                                    Start Quiz
+                                </a>
+                            </div>
+                        </div>
+                    </div>
+                    {% empty %}
+                    <div class="col-12 text-center py-4 text-muted">
+                        No quizzes currently available for this subject.
+                    </div>
+                    {% endfor %}
+                </div>
+            </div>
+        </div>
+
+
+
+    </div>
+</div>
+{% endblock %}
+
+{% block extra_js %}
+<script id="flashcard-data" type="application/json">{{ cards_json|safe }}</script>
+<script>
+    // Pass serialized flashcards to JavaScript for interactive 3D flipping
+    const flashcardDataElem = document.getElementById('flashcard-data');
+    window.FLASHCARD_DATA = flashcardDataElem ? JSON.parse(flashcardDataElem.textContent || '[]') : [];
+
+    // Auto-activate tab if URL contains ?tab=... (e.g. ?tab=flashcard or ?tab=revision)
+    const urlParams = new URLSearchParams(window.location.search);
+    const tabParam = urlParams.get('tab');
+    if (tabParam) {
+        const targetTabBtn = document.getElementById(`${tabParam}-tab`);
+        if (targetTabBtn) {
+            const tab = new bootstrap.Tab(targetTabBtn);
+            tab.show();
+        }
+    }
+</script>
+{% endblock %}

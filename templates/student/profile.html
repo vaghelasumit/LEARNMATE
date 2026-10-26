@@ -1,0 +1,70 @@
+{% extends 'base.html' %}
+
+{% block title %}My Profile - LearnMate{% endblock %}
+
+{% block content %}
+<div class="container py-3">
+    <div class="row justify-content-center">
+        <div class="col-md-8 col-lg-6">
+            <div class="custom-card p-4 shadow-sm">
+                <div class="text-center mb-4">
+                    <div class="avatar bg-primary text-white rounded-circle d-inline-flex align-items-center justify-content-center mb-2" style="width: 80px; height: 80px; font-size: 2.2rem;">
+                        {{ user.first_name|default:user.username|make_list|first|upper }}
+                    </div>
+                    <h4 class="fw-bold mb-0">{{ user.first_name|default:user.username }}</h4>
+                    <p class="text-muted small mb-0">{{ user.email }}</p>
+                    <span class="badge bg-primary-subtle text-primary mt-1">Student Account</span>
+                </div>
+
+                <div class="list-group mb-4">
+                    <div class="list-group-item d-flex justify-content-between align-items-center py-3">
+                        <span> Username</span>
+                        <strong>{{ user.username }}</strong>
+                    </div>
+                    <div class="list-group-item d-flex justify-content-between align-items-center py-3">
+                        <span> Email</span>
+                        <strong>{{ user.email }}</strong>
+                    </div>
+                    <div class="list-group-item d-flex justify-content-between align-items-center py-3">
+                        <span> Joined Date</span>
+                        <strong>{{ user.date_joined|date:"d M Y" }}</strong>
+                    </div>
+                </div>
+
+                <h5 class="fw-bold mb-3">Learning Summary</h5>
+                <div class="row g-2 text-center mb-4">
+                    <div class="col-3">
+                        <div class="p-2 border rounded bg-light">
+                            <span class="d-block small text-muted">Attempts</span>
+                            <strong class="fs-5 text-dark">{{ attempts_count }}</strong>
+                        </div>
+                    </div>
+                    <div class="col-3">
+                        <div class="p-2 border rounded bg-light">
+                            <span class="d-block small text-muted">Passed</span>
+                            <strong class="fs-5 text-success">{{ passed_count }}</strong>
+                        </div>
+                    </div>
+                    <div class="col-3">
+                        <div class="p-2 border rounded bg-light">
+                            <span class="d-block small text-muted">Certificates</span>
+                            <strong class="fs-5 text-primary">{{ certificates_count }}</strong>
+                        </div>
+                    </div>
+                    <div class="col-3">
+                        <div class="p-2 border rounded bg-light">
+                            <span class="d-block small text-muted">Bookmarks</span>
+                            <strong class="fs-5 text-info">{{ bookmarks_count }}</strong>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="d-grid gap-2">
+                    <a href="{% url 'dashboard' %}" class="btn btn-primary">Go to Dashboard</a>
+                    <a href="{% url 'logout' %}" class="btn btn-outline-danger btn-sm">Logout</a>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

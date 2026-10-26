@@ -1,0 +1,109 @@
+{% extends 'base.html' %}
+
+{% block title %}Manage Subjects - Admin{% endblock %}
+
+{% block content %}
+<div class="container py-3">
+    <div class="d-flex justify-content-between align-items-center mb-4">
+        <div>
+            <h3 class="fw-bold mb-1">Manage Subjects</h3>
+            <p class="text-muted small mb-0">Add, edit, or remove subjects from the platform</p>
+        </div>
+        <a href="{% url 'admin_dashboard' %}" class="btn btn-outline-secondary btn-sm">
+            Back to Dashboard
+        </a>
+    </div>
+
+    <div class="row g-4">
+        <!-- Add Subject Form -->
+        <div class="col-lg-4">
+            <div class="custom-card p-4">
+                <h5 class="fw-bold mb-3">Add New Subject</h5>
+                {% if form.errors %}
+                <div class="alert alert-danger py-2 small mb-3">
+                    <strong class="d-block mb-1"><i class="bi bi-exclamation-triangle-fill me-1"></i> Please correct the errors below:</strong>
+                    <ul class="mb-0 ps-3">
+                        {% for field in form %}
+                            {% for error in field.errors %}
+                                <li>{{ field.label }}: {{ error }}</li>
+                            {% endfor %}
+                        {% endfor %}
+                        {% for error in form.non_field_errors %}
+                            <li>{{ error }}</li>
+                        {% endfor %}
+                    </ul>
+                </div>
+                {% endif %}
+                <form method="POST" enctype="multipart/form-data">
+                    {% csrf_token %}
+                    <div class="mb-3">
+                        <label class="form-label fw-semibold">Subject Name</label>
+                        {{ form.subject_name }}
+                    </div>
+                    <div class="mb-3">
+                        <label class="form-label fw-semibold">Description</label>
+                        {{ form.description }}
+                    </div>
+                    <div class="mb-3">
+                        <label class="form-label fw-semibold">Cover Image (Upload)</label>
+                        {{ form.image }}
+                        <small class="text-muted d-block mt-1">Upload a subject cover photo (JPG/PNG/WEBP)</small>
+                    </div>
+                    <div class="mb-3">
+                        <label class="form-label fw-semibold">Or Image URL (Web link)</label>
+                        {{ form.image_url }}
+                        <small class="text-muted d-block mt-1">Paste an online image URL if not uploading</small>
+                    </div>
+                    <button type="submit" class="btn btn-primary w-100 fw-semibold">
+                        Save Subject
+                    </button>
+                </form>
+            </div>
+        </div>
+
+        <!-- Subject List Table -->
+        <div class="col-lg-8">
+            <div class="custom-card p-4">
+                <h5 class="fw-bold mb-3">All Subjects ({{ courses.count }})</h5>
+                <div class="table-responsive">
+                    <table class="table table-hover align-middle">
+                        <thead class="table-light">
+                            <tr>
+                                <th># ID</th>
+                                <th>Cover</th>
+                                <th>Subject Name</th>
+                                <th>Materials</th>
+                                <th>Quizzes</th>
+                                <th>Flashcards</th>
+                                <th>Actions</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            {% for c in courses %}
+                            <tr>
+                                <td>{{ c.subject_id }}</td>
+                                <td>
+                                    <img src="{{ c.get_image_url }}" alt="{{ c.subject_name }}" class="rounded shadow-sm" style="width: 52px; height: 38px; object-fit: cover;">
+                                </td>
+                                <td><strong>{{ c.subject_name }}</strong></td>
+                                <td><span class="badge bg-primary">{{ c.materials.count }}</span></td>
+                                <td><span class="badge bg-warning text-dark">{{ c.quizzes.count }}</span></td>
+                                <td><span class="badge bg-success">{{ c.flashcards.count }}</span></td>
+                                <td>
+                                    <a href="{% url 'admin_edit_course' c.subject_id %}" class="btn btn-sm btn-outline-primary me-1">Edit</a>
+                                    <a href="{% url 'admin_delete_course' c.subject_id %}" class="btn btn-sm btn-outline-danger" onclick="return confirm('Are you sure you want to delete this subject and all its related materials?');">Delete</a>
+                                </td>
+                            </tr>
+                            {% empty %}
+                            <tr>
+                                <td colspan="6" class="text-center py-3 text-muted">No subjects found.</td>
+                            </tr>
+                            {% endfor %}
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

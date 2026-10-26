@@ -1,0 +1,95 @@
+{% extends 'base.html' %}
+
+{% block title %}Flashcards - {{ subject.subject_name }}{% endblock %}
+
+{% block content %}
+<div class="container py-3">
+    <div class="row justify-content-center">
+        <div class="col-lg-8 text-center">
+            <!-- Breadcrumb -->
+            <nav aria-label="breadcrumb">
+                <ol class="breadcrumb justify-content-center small">
+                    <li class="breadcrumb-item"><a href="{% url 'courses' %}">Subjects</a></li>
+                    <li class="breadcrumb-item"><a href="{% url 'course_detail' subject.subject_id %}">{{ subject.subject_name }}</a></li>
+                    <li class="breadcrumb-item active">Flashcards</li>
+                </ol>
+            </nav>
+
+            <h3 class="fw-bold mb-1">{{ subject.subject_name }} Flashcards</h3>
+            <p class="text-muted small mb-3">Click on the card or the 'Flip Card' button to reveal the answer.</p>
+
+            <!-- Card Counter -->
+            <span id="card-counter" class="badge bg-secondary mb-3 px-3 py-2 fs-6">
+                Card 1 of {{ total_cards }}
+            </span>
+
+            {% if total_cards > 0 %}
+            <!-- 3D Flip Flashcard with Floating Bookmark Star -->
+            <div class="flashcard-container position-relative">
+                <!-- Floating Corner Star Bookmark Button -->
+                <button id="card-corner-bookmark" class="card-bookmark-corner bookmark-toggle-btn {% if flashcards.first.flashcard_id in bookmarked_flashcard_ids %}active is-bookmarked{% endif %}"
+                        data-type="flashcard" data-id="{{ flashcards.first.flashcard_id }}" title="Bookmark this flashcard">
+                    <i class="bi {% if flashcards.first.flashcard_id in bookmarked_flashcard_ids %}bi-star-fill text-warning{% else %}bi-star text-muted{% endif %}"></i>
+                </button>
+                <div class="flashcard" id="flashcard-card">
+                    <!-- Front Face: Question -->
+                    <div class="card-face card-front">
+                        <span class="card-badge bg-primary text-white">Question</span>
+                        <h4 class="fw-bold px-3" id="card-question-text" style="line-height: 1.6;">
+                            <!-- Injected by JavaScript -->
+                        </h4>
+                        <span class="text-muted small mt-3">Click anywhere to flip</span>
+                    </div>
+
+                    <!-- Back Face: Answer -->
+                    <div class="card-face card-back">
+                        <span class="card-badge bg-success text-white">Answer / Explanation</span>
+                        <div class="px-3" id="card-answer-text" style="font-size: 1.15rem; line-height: 1.6; white-space: pre-line;">
+                            <!-- Injected by JavaScript -->
+                        </div>
+                        <span class="text-light-50 small mt-3">Click to flip back</span>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Controls (Matches Sketch 4: Prev | Flip | Bookmark | Next) -->
+            <div class="d-flex justify-content-center flex-wrap gap-3 mt-4">
+                <button id="card-prev-btn" class="btn btn-outline-secondary px-4 py-2 fw-semibold">
+                    Previous
+                </button>
+                <button id="card-flip-btn" class="btn btn-primary px-4 py-2 fw-semibold">
+                    Flip Card
+                </button>
+                <button id="card-bookmark-btn" class="btn {% if flashcards.first.flashcard_id in bookmarked_flashcard_ids %}btn-warning{% else %}btn-outline-warning{% endif %} px-4 py-2 fw-semibold bookmark-toggle-btn"
+                        data-type="flashcard" data-id="{{ flashcards.first.flashcard_id }}">
+                    <i class="bi {% if flashcards.first.flashcard_id in bookmarked_flashcard_ids %}bi-bookmark-fill{% else %}bi-bookmark{% endif %} me-1"></i>
+                    <span>{% if flashcards.first.flashcard_id in bookmarked_flashcard_ids %}Bookmarked{% else %}Bookmark Card{% endif %}</span>
+                </button>
+                <button id="card-next-btn" class="btn btn-outline-secondary px-4 py-2 fw-semibold">
+                    Next
+                </button>
+            </div>
+            {% else %}
+            <div class="alert alert-info mt-4">
+                No flashcards created for this subject yet.
+            </div>
+            {% endif %}
+
+            <div class="mt-4 pt-3 border-top">
+                <a href="{% url 'course_detail' subject.subject_id %}" class="btn btn-outline-dark btn-sm">
+                    Back to Subject Overview
+                </a>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+{% block extra_js %}
+<script id="flashcard-data" type="application/json">{{ cards_json|safe }}</script>
+<script>
+    // Pass serialized flashcards to JavaScript for instant 3D flipping
+    const flashcardDataElem = document.getElementById('flashcard-data');
+    window.FLASHCARD_DATA = flashcardDataElem ? JSON.parse(flashcardDataElem.textContent || '[]') : [];
+</script>
+{% endblock %}

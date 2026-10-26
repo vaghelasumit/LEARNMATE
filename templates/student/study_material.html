@@ -1,0 +1,93 @@
+{% extends 'base.html' %}
+
+{% block title %}{{ material.title }} - Study Material{% endblock %}
+
+{% block content %}
+<div class="container py-3">
+    <div class="row justify-content-center">
+        <div class="col-lg-9">
+            <nav aria-label="breadcrumb">
+                <ol class="breadcrumb small">
+                    <li class="breadcrumb-item"><a href="{% url 'courses' %}">Subjects</a></li>
+                    <li class="breadcrumb-item"><a href="{% url 'course_detail' material.subject.subject_id %}">{{ material.subject.subject_name }}</a></li>
+                    <li class="breadcrumb-item active">{{ material.title }}</li>
+                </ol>
+            </nav>
+
+            <div class="custom-card p-4 shadow-sm">
+                <div class="d-flex justify-content-between align-items-center flex-wrap gap-2 pb-3 mb-3 border-bottom">
+                    <div>
+                        <span class="badge bg-primary text-uppercase mb-1">{{ material.material_type }}</span>
+                        <h3 class="fw-bold mb-0 text-dark">{{ material.title }}</h3>
+                        <small class="text-muted">Subject: {{ material.subject.subject_name }} • Uploaded on {{ material.created_at|date:"d M Y" }}</small>
+                    </div>
+                    <div class="d-flex gap-2">
+                        <button class="btn btn-sm bookmark-toggle-btn {% if is_bookmarked %}btn-warning{% else %}btn-outline-warning{% endif %}" data-type="material" data-id="{{ material.material_id }}">
+                            <i class="bi {% if is_bookmarked %}bi-bookmark-fill{% else %}bi-bookmark{% endif %} me-1"></i>
+                            <span>{% if is_bookmarked %}Bookmarked{% else %}Bookmark{% endif %}</span>
+                        </button>
+                        {% if material.file_path %}
+                        <a href="{{ material.file_path.url }}" class="btn btn-sm btn-outline-primary" download>
+                            Download File
+                        </a>
+                        {% endif %}
+                    </div>
+                </div>
+
+                <!-- Video & Drive Link Sections -->
+                {% if material.video_url %}
+                <div class="alert alert-info d-flex align-items-center justify-content-between mb-3">
+                    <div>
+                                                <strong>Video Lecture Available:</strong>
+                        <div class="small text-muted text-truncate" style="max-width: 400px;">{{ material.video_url }}</div>
+                    </div>
+                    <a href="{{ material.video_url }}" target="_blank" class="btn btn-danger btn-sm text-white fw-semibold">
+                        Watch Video Lecture
+                    </a>
+                </div>
+                {% endif %}
+
+                {% if material.drive_link %}
+                <div class="alert alert-success d-flex align-items-center justify-content-between mb-3">
+                    <div>
+                                                <strong>Google Drive Resource:</strong>
+                        <div class="small text-muted text-truncate" style="max-width: 400px;">{{ material.drive_link }}</div>
+                    </div>
+                    <a href="{{ material.drive_link }}" target="_blank" class="btn btn-success btn-sm text-white fw-semibold">
+                        Open in Google Drive
+                    </a>
+                </div>
+                {% endif %}
+
+                <!-- Study Notes / Description Content -->
+                <div class="study-content p-3 bg-light rounded border mb-4">
+                    <h5 class="fw-semibold text-secondary mb-3">Material Content / Notes:</h5>
+                    <div style="white-space: pre-line; line-height: 1.8; font-size: 1.05rem;">
+                        {{ material.description }}
+                    </div>
+                </div>
+
+                {% if material.file_path %}
+                <div class="alert alert-info d-flex align-items-center justify-content-between">
+                    <div>
+                                                <span>Attached Document: <strong>{{ material.file_path.name }}</strong></span>
+                    </div>
+                    <a href="{{ material.file_path.url }}" class="btn btn-info btn-sm text-dark fw-semibold" target="_blank">
+                        Open File
+                    </a>
+                </div>
+                {% endif %}
+
+                <div class="d-flex justify-content-between mt-4">
+                    <a href="{% url 'course_detail' material.subject.subject_id %}" class="btn btn-outline-secondary btn-sm">
+                        Back to Subject
+                    </a>
+                    <a href="{% url 'flashcards_deck' material.subject.subject_id %}" class="btn btn-outline-success btn-sm">
+                        Go to Flashcards
+                    </a>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

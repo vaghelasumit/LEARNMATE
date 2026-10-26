@@ -1,0 +1,71 @@
+{% extends 'base.html' %}
+
+{% block title %}Certificate of Completion - {{ certificate.certificate_no }}{% endblock %}
+
+{% block content %}
+<div class="container py-3">
+    <div class="d-flex justify-content-between align-items-center mb-4 no-print">
+        <a href="{% url 'certificates_list' %}" class="btn btn-outline-secondary btn-sm">
+            Back to Certificates
+        </a>
+        <button onclick="window.print()" class="btn btn-success btn-sm px-4">
+            Print / Save as PDF
+        </button>
+    </div>
+
+    <div class="certificate-frame">
+        <div class="certificate-inner-border">
+            <div class="mb-4">
+                <h5 class="text-danger fw-bold text-uppercase mb-1" style="letter-spacing: 2px;">Ganpat University</h5>
+                <h6 class="text-muted mb-1" style="font-size: 0.95rem;">A M PATEL INSTITUTE OF COMPUTER STUDIES (AMPICS)
+                </h6>
+                <div class="text-muted small">Department of Master of Computer Applications (MCA)</div>
+                <hr style="width: 60%; margin: 15px auto; border-top: 2px solid #2563eb;">
+            </div>
+
+            <h2 class="fw-bold text-primary mb-3" style="font-family: Georgia, serif; letter-spacing: 1px;">
+                CERTIFICATE OF COMPLETION
+            </h2>
+
+            <p class="text-muted mb-4" style="font-size: 1.1rem; font-style: italic;">
+                This is proudly presented to
+            </p>
+
+            <h1 class="fw-bold text-dark mb-4 text-decoration-underline"
+                style="font-family: 'Times New Roman', serif; font-size: 2.5rem;">
+                {{ student.first_name|default:student.username|upper }}
+            </h1>
+
+            <p class="text-muted mx-auto col-md-10 mb-4" style="font-size: 1.1rem; line-height: 1.8;">
+                for successfully completing all study modules, interactive flashcards, and demonstrating excellence in
+                the assessment examination for the subject:
+            </p>
+
+            <h3 class="fw-bold text-dark mb-4" style="color: #1e3a8a !important;">
+                "{{ subject.subject_name }}"
+            </h3>
+
+            <div class="row align-items-center mt-5 pt-4 border-top">
+                <div class="col-4 text-center">
+                    <div style="font-family: 'Brush Script MT', cursive; font-size: 1.6rem; color: #1e3a8a;">Project
+                        Coordinator</div>
+                    <hr style="width: 80%; margin: 5px auto;">
+                    <span class="small text-muted fw-bold">Faculty Coordinator</span>
+                </div>
+                <div class="col-4 text-center">
+                    <div class="badge bg-primary px-3 py-2 text-uppercase mb-1">LearnMate Verified</div>
+                    <div class="small text-muted">Cert ID: <code>{{ certificate.certificate_no }}</code></div>
+                    <div class="small text-muted">Issue Date: <strong>{{ certificate.issue_date|date:"d M Y" }}</strong>
+                    </div>
+                </div>
+                <div class="col-4 text-center">
+                    <div style="font-family: 'Brush Script MT', cursive; font-size: 1.6rem; color: #1e3a8a;">Head of
+                        Dept.</div>
+                    <hr style="width: 80%; margin: 5px auto;">
+                    <span class="small text-muted fw-bold">Head of MCA Department</span>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

@@ -1,0 +1,73 @@
+{% extends 'base.html' %}
+
+{% block title %}Take Quiz - {{ quiz.quiz_title }}{% endblock %}
+
+{% block content %}
+<div class="container py-3">
+    <div class="row justify-content-center">
+        <div class="col-lg-8">
+            <!-- Quiz Info Card & Timer -->
+            <div class="custom-card p-3 mb-4 sticky-top bg-white border shadow-sm" style="top: 70px; z-index: 100;">
+                <div class="d-flex justify-content-between align-items-center">
+                    <div>
+                        <span class="badge bg-primary mb-1">{{ quiz.subject.subject_name }}</span>
+                        <h4 class="fw-bold mb-0 text-dark">{{ quiz.quiz_title }}</h4>
+                        <small class="text-muted">Total Questions: {{ total_questions }} • Passing Score: {{ quiz.passing_marks }}/{{ total_questions }}</small>
+                    </div>
+                    <div class="text-end">
+                        <div class="small text-muted fw-semibold">Time Remaining</div>
+                        <div class="fs-4 fw-bold text-danger" id="quiz-timer" data-minutes="10">10:00</div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Quiz Questions Form -->
+            <form method="POST" action="{% url 'submit_quiz' quiz.quiz_id %}" id="quiz-form">
+                {% csrf_token %}
+
+                {% for q in questions %}
+                <div class="custom-card p-4 mb-4 shadow-sm">
+                    <div class="d-flex justify-content-between align-items-center mb-3">
+                        <span class="badge bg-secondary">Question {{ forloop.counter }} of {{ total_questions }}</span>
+                    </div>
+
+                    <h5 class="fw-bold text-dark mb-4">{{ q.question_text }}</h5>
+
+                    <div class="quiz-options">
+                        <!-- Option A -->
+                        <label class="quiz-option-label">
+                            <input type="radio" name="question_{{ q.question_id }}" value="A" class="form-check-input me-2">
+                            <span class="option-text"><strong>A.</strong> {{ q.option_a }}</span>
+                        </label>
+
+                        <!-- Option B -->
+                        <label class="quiz-option-label">
+                            <input type="radio" name="question_{{ q.question_id }}" value="B" class="form-check-input me-2">
+                            <span class="option-text"><strong>B.</strong> {{ q.option_b }}</span>
+                        </label>
+
+                        <!-- Option C -->
+                        <label class="quiz-option-label">
+                            <input type="radio" name="question_{{ q.question_id }}" value="C" class="form-check-input me-2">
+                            <span class="option-text"><strong>C.</strong> {{ q.option_c }}</span>
+                        </label>
+
+                        <!-- Option D -->
+                        <label class="quiz-option-label">
+                            <input type="radio" name="question_{{ q.question_id }}" value="D" class="form-check-input me-2">
+                            <span class="option-text"><strong>D.</strong> {{ q.option_d }}</span>
+                        </label>
+                    </div>
+                </div>
+                {% endfor %}
+
+                <div class="custom-card p-3 text-center">
+                    <button type="submit" class="btn btn-success btn-lg px-5 fw-bold" onclick="return confirm('Are you sure you want to submit your answers?');">
+                        Submit Quiz Answers
+                    </button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+{% endblock %}

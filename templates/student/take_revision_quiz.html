@@ -1,0 +1,91 @@
+{% extends 'base.html' %}
+
+{% block title %}Retake Quiz - {{ subject.subject_name }}{% endblock %}
+
+{% block content %}
+<div class="container py-3">
+    <div class="row justify-content-center">
+        <div class="col-lg-8">
+            <!-- Breadcrumb -->
+            <nav aria-label="breadcrumb" class="mb-3">
+                <ol class="breadcrumb small">
+                    <li class="breadcrumb-item"><a href="{% url 'home' %}">Home</a></li>
+                    <li class="breadcrumb-item"><a href="{% url 'courses' %}">Subjects</a></li>
+                    <li class="breadcrumb-item"><a href="{% url 'course_detail' subject.subject_id %}">{{ subject.subject_name }}</a></li>
+                    <li class="breadcrumb-item"><a href="{% url 'revision_hub' %}?subject_id={{ subject.subject_id }}">Revision</a></li>
+                    <li class="breadcrumb-item active">Retake Quiz</li>
+                </ol>
+            </nav>
+
+            <!-- Quiz Header Banner -->
+            <div class="custom-card p-4 mb-4 sticky-top bg-white border shadow-sm" style="top: 70px; z-index: 100;">
+                <div class="d-flex justify-content-between align-items-center flex-wrap gap-2">
+                    <div>
+                        <span class="badge bg-warning text-dark mb-1">
+                            Mistake Revision Quiz
+                        </span>
+                        <h4 class="fw-bold mb-0 text-dark">{{ subject.subject_name }}</h4>
+                        <small class="text-muted">Total Questions: {{ total_questions }} • Answer correctly to mark them as <strong>Mastered</strong></small>
+                    </div>
+                    <div class="text-end">
+                        <span class="badge bg-primary fs-6 px-3 py-2">
+                            {{ total_questions }} Questions
+                        </span>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Quiz Form -->
+            <form method="POST" action="{% url 'submit_revision_quiz' subject.subject_id %}" id="revision-quiz-form">
+                {% csrf_token %}
+
+                {% for q in questions %}
+                <div class="custom-card p-4 mb-4 shadow-sm">
+                    <div class="d-flex justify-content-between align-items-center mb-3">
+                        <span class="badge bg-secondary">Question {{ forloop.counter }} of {{ total_questions }}</span>
+                    </div>
+
+                    <h5 class="fw-bold text-dark mb-4" style="line-height: 1.5;">{{ q.question_text }}</h5>
+
+                    <div class="quiz-options">
+                        <!-- Option A -->
+                        <label class="quiz-option-label">
+                            <input type="radio" name="question_{{ q.question_id }}" value="A" class="form-check-input me-2">
+                            <span class="option-text"><strong>A.</strong> {{ q.option_a }}</span>
+                        </label>
+
+                        <!-- Option B -->
+                        <label class="quiz-option-label">
+                            <input type="radio" name="question_{{ q.question_id }}" value="B" class="form-check-input me-2">
+                            <span class="option-text"><strong>B.</strong> {{ q.option_b }}</span>
+                        </label>
+
+                        <!-- Option C -->
+                        <label class="quiz-option-label">
+                            <input type="radio" name="question_{{ q.question_id }}" value="C" class="form-check-input me-2">
+                            <span class="option-text"><strong>C.</strong> {{ q.option_c }}</span>
+                        </label>
+
+                        <!-- Option D -->
+                        <label class="quiz-option-label">
+                            <input type="radio" name="question_{{ q.question_id }}" value="D" class="form-check-input me-2">
+                            <span class="option-text"><strong>D.</strong> {{ q.option_d }}</span>
+                        </label>
+                    </div>
+                </div>
+                {% endfor %}
+
+                <!-- Action Buttons -->
+                <div class="custom-card p-4 text-center shadow-sm d-flex justify-content-center gap-3">
+                    <a href="{% url 'revision_hub' %}?subject_id={{ subject.subject_id }}" class="btn btn-outline-secondary px-4 py-2">
+                        Cancel
+                    </a>
+                    <button type="submit" class="btn btn-success btn-lg px-5 fw-bold shadow-sm" onclick="return confirm('Are you ready to submit your revision answers?');">
+                        Submit Revision Answers
+                    </button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+{% endblock %}

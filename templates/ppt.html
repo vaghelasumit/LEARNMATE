@@ -1,0 +1,1693 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>LearnMate - MCA Project Presentation | Ganpat University</title>
+    <!-- Google Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=Montserrat:wght@600;700;800;900&family=Fira+Code:wght@500&display=swap" rel="stylesheet">
+    
+    <style>
+        :root {
+            --gunv-red: #d32f2f;
+            --gunv-dark-red: #b71c1c;
+            --gunv-navy: #1a237e;
+            --gunv-gray: #424242;
+            --slide-bg: #ffffff;
+            --canvas-bg: #1e1e2f;
+            --text-dark: #212121;
+            --text-muted: #616161;
+            --border-color: #212121;
+            --accent-blue: #1976d2;
+            --accent-purple: #4b23b1;
+        }
+
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
+
+        body {
+            font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+            background-color: var(--canvas-bg);
+            color: var(--text-dark);
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            overflow-x: hidden;
+            padding: 10px;
+        }
+
+        /* Presentation Control Bar */
+        .controls-bar {
+            width: 100%;
+            max-width: 1100px;
+            background: rgba(255, 255, 255, 0.12);
+            backdrop-filter: blur(10px);
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            border-radius: 12px;
+            padding: 10px 20px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 15px;
+            color: #ffffff;
+            z-index: 100;
+        }
+
+        .controls-left, .controls-right {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+
+        .btn-ctrl {
+            background: #ffffff;
+            color: #1a1a2e;
+            border: none;
+            border-radius: 6px;
+            padding: 8px 16px;
+            font-size: 0.88rem;
+            font-weight: 700;
+            cursor: pointer;
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+            transition: all 0.2s ease;
+        }
+
+        .btn-ctrl:hover {
+            background: #e0e0e0;
+            transform: translateY(-1px);
+        }
+
+        .btn-ctrl.btn-primary {
+            background: var(--gunv-red);
+            color: #ffffff;
+        }
+
+        .btn-ctrl.btn-primary:hover {
+            background: var(--gunv-dark-red);
+        }
+
+        .slide-counter {
+            font-family: 'Montserrat', sans-serif;
+            font-weight: 700;
+            font-size: 0.95rem;
+            color: #ffffff;
+            letter-spacing: 0.5px;
+        }
+
+        .slide-select {
+            background: rgba(255, 255, 255, 0.9);
+            border: 1px solid #ccc;
+            border-radius: 6px;
+            padding: 6px 12px;
+            font-size: 0.85rem;
+            font-weight: 600;
+            color: #1a1a2e;
+            outline: none;
+            cursor: pointer;
+        }
+
+        /* Slide Stage (16:9 Aspect Ratio) */
+        .stage {
+            width: 100%;
+            max-width: 1100px;
+            aspect-ratio: 16 / 9;
+            background: var(--slide-bg);
+            box-shadow: 0 20px 60px rgba(0, 0, 0, 0.5);
+            border-radius: 4px;
+            position: relative;
+            overflow: hidden;
+            display: flex;
+            flex-direction: column;
+        }
+
+        .slide {
+            display: none;
+            width: 100%;
+            height: 100%;
+            padding: 0;
+            flex-direction: column;
+            position: absolute;
+            top: 0;
+            left: 0;
+            background: #ffffff;
+        }
+
+        .slide.active {
+            display: flex;
+        }
+
+        /* Slide Header Template (Matches User's Photo Exactly) */
+        .slide-header {
+            height: 90px;
+            position: relative;
+            display: flex;
+            align-items: flex-start;
+            padding-left: 175px;
+            padding-right: 25px;
+            padding-top: 18px;
+            background: #ffffff;
+        }
+
+        /* Ganpat University & AMPICS Red Badge */
+        .gu-badge {
+            position: absolute;
+            top: 0;
+            left: 20px;
+            width: 110px;
+            height: 96px;
+            background: var(--gunv-red);
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            color: #ffffff;
+            text-align: center;
+            padding: 6px 4px 4px 4px;
+            box-shadow: 0 4px 8px rgba(0,0,0,0.15);
+            z-index: 10;
+        }
+
+        .gu-badge-logo {
+            width: 32px;
+            height: 32px;
+            margin-bottom: 2px;
+        }
+
+        .gu-badge-name {
+            font-family: 'Montserrat', sans-serif;
+            font-weight: 800;
+            font-size: 0.65rem;
+            line-height: 1.1;
+            letter-spacing: 0.3px;
+            text-transform: uppercase;
+        }
+
+        .gu-badge-subtext {
+            font-size: 0.45rem;
+            opacity: 0.9;
+            margin-top: 2px;
+        }
+
+        .gu-badge-institute {
+            background: #212121;
+            color: #ffffff;
+            width: 100%;
+            margin-top: 4px;
+            padding: 2px 0;
+            font-family: 'Montserrat', sans-serif;
+            font-weight: 900;
+            font-size: 0.68rem;
+            letter-spacing: 0.8px;
+            text-align: center;
+        }
+
+        /* Top Right Social Ribbon Bar */
+        .gu-top-ribbon {
+            position: absolute;
+            top: 0;
+            right: 0;
+            height: 18px;
+            background: linear-gradient(90deg, transparent 0%, #616161 20%, #424242 100%);
+            display: flex;
+            align-items: center;
+            justify-content: flex-end;
+            padding-right: 25px;
+            padding-left: 40px;
+            clip-path: polygon(15px 0%, 100% 0%, 100% 100%, 0% 100%);
+        }
+
+        .gu-top-ribbon span {
+            color: #ffffff;
+            font-size: 0.62rem;
+            font-weight: 700;
+            letter-spacing: 1.2px;
+            text-transform: uppercase;
+        }
+
+        /* Slide Main Section Title */
+        .slide-title {
+            font-size: 2.1rem;
+            font-weight: 800;
+            color: #111111;
+            letter-spacing: -0.3px;
+            margin-top: 8px;
+            font-family: 'Inter', sans-serif;
+        }
+
+        /* Slide Content Body */
+        .slide-body {
+            flex: 1;
+            padding: 10px 40px 30px 40px;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            position: relative;
+        }
+
+        /* Slide Footer */
+        .slide-footer {
+            height: 32px;
+            background: #f8f9fa;
+            border-top: 1px solid #e9ecef;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 0 25px;
+            font-size: 0.72rem;
+            color: #757575;
+            font-weight: 600;
+        }
+
+        /* ------------------------------------------------------------- */
+        /* EXACT DIAGRAM: 3.3 PROGRAMMING ENVIRONMENT (FROM USER PHOTO)   */
+        /* ------------------------------------------------------------- */
+        .diagram-container {
+            width: 100%;
+            max-width: 960px;
+            margin: 0 auto;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            position: relative;
+            padding-top: 15px;
+        }
+
+        .diagram-top-row {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            width: 100%;
+            position: relative;
+        }
+
+        /* Architecture Block Box (Matching User's Photo style) */
+        .arch-box {
+            background: #ffffff;
+            border: 2px solid #111111;
+            border-radius: 8px;
+            padding: 16px 18px;
+            text-align: center;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
+            position: relative;
+            transition: transform 0.2s ease, box-shadow 0.2s ease;
+        }
+
+        .arch-box:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 8px 18px rgba(0, 0, 0, 0.12);
+        }
+
+        .arch-box-title {
+            font-family: 'Montserrat', sans-serif;
+            font-weight: 900;
+            font-size: 1.05rem;
+            letter-spacing: 0.5px;
+            color: #111111;
+            margin-bottom: 8px;
+            text-transform: uppercase;
+        }
+
+        .arch-box-line1 {
+            font-size: 0.88rem;
+            font-weight: 700;
+            color: #212121;
+            margin-bottom: 4px;
+        }
+
+        .arch-box-line2 {
+            font-size: 0.82rem;
+            font-weight: 500;
+            color: #424242;
+            line-height: 1.35;
+        }
+
+        /* Top row widths */
+        .box-frontend {
+            width: 275px;
+        }
+
+        .box-center-mvt {
+            width: 345px;
+        }
+
+        .box-backend {
+            width: 275px;
+        }
+
+        .box-database {
+            width: 320px;
+            margin-top: 40px;
+        }
+
+        /* Connecting Arrows (SVG) */
+        .arrow-left-to-center {
+            position: absolute;
+            left: 276px;
+            top: 50%;
+            transform: translateY(-50%);
+            width: 32px;
+            height: 20px;
+        }
+
+        .arrow-right-to-center {
+            position: absolute;
+            right: 276px;
+            top: 50%;
+            transform: translateY(-50%);
+            width: 32px;
+            height: 20px;
+        }
+
+        .arrow-down-to-db {
+            width: 20px;
+            height: 38px;
+            position: absolute;
+            top: 132px;
+            left: 50%;
+            transform: translateX(-50%);
+        }
+
+        /* ------------------------------------------------------------- */
+        /* STYLES FOR 3.3.1 (FRONT-END) & 3.3.2 (BACK-END) SLIDES        */
+        /* ------------------------------------------------------------- */
+        .subenv-top-box {
+            background: #ffffff;
+            border: 2px solid #212121;
+            border-radius: 6px;
+            padding: 10px 18px;
+            text-align: center;
+            box-shadow: 0 3px 6px rgba(0,0,0,0.05);
+            width: fit-content;
+        }
+
+        .subenv-top-title {
+            font-family: 'Montserrat', sans-serif;
+            font-weight: 800;
+            font-size: 0.95rem;
+            letter-spacing: 0.5px;
+            color: #111111;
+            margin-bottom: 4px;
+            text-transform: uppercase;
+        }
+
+        .subenv-top-sub {
+            font-size: 0.8rem;
+            font-weight: 600;
+            color: #333333;
+        }
+
+        .subenv-card {
+            background: #ffffff;
+            border: 2px solid #212121;
+            border-radius: 6px;
+            padding: 12px 14px;
+            text-align: center;
+            box-shadow: 0 3px 6px rgba(0,0,0,0.05);
+            display: flex;
+            flex-direction: column;
+            justify-content: flex-start;
+            align-items: center;
+        }
+
+        .subenv-card-title {
+            font-family: 'Montserrat', sans-serif;
+            font-weight: 800;
+            font-size: 0.88rem;
+            letter-spacing: 0.5px;
+            color: #111111;
+            margin-bottom: 6px;
+            text-transform: uppercase;
+        }
+
+        .subenv-card-text {
+            font-size: 0.77rem;
+            line-height: 1.45;
+            color: #2b2b2b;
+            font-weight: 500;
+        }
+
+        /* ------------------------------------------------------------- */
+        /* ADDITIONAL STYLES FOR FULL SLIDE DECK                          */
+        /* ------------------------------------------------------------- */
+        
+        /* Title Slide */
+        .slide-title-hero {
+            background: linear-gradient(135deg, #1a237e 0%, #283593 50%, #4b23b1 100%);
+            color: #ffffff;
+            display: flex;
+            flex-direction: column;
+            justify-content: space-between;
+            padding: 40px 50px;
+            position: relative;
+        }
+
+        .title-hero-header {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            border-bottom: 1.5px solid rgba(255, 255, 255, 0.2);
+            padding-bottom: 16px;
+        }
+
+        .title-hero-title {
+            font-family: 'Montserrat', sans-serif;
+            font-weight: 900;
+            font-size: 3rem;
+            letter-spacing: -1px;
+            line-height: 1.1;
+            margin-bottom: 12px;
+        }
+
+        .title-hero-tagline {
+            font-size: 1.25rem;
+            color: #e0e7ff;
+            font-weight: 500;
+            max-width: 750px;
+            line-height: 1.5;
+        }
+
+        .title-developers-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 20px;
+            background: rgba(255, 255, 255, 0.08);
+            border: 1px solid rgba(255, 255, 255, 0.15);
+            border-radius: 10px;
+            padding: 16px 24px;
+            margin-top: 15px;
+        }
+
+        .dev-item h5 {
+            font-size: 1.05rem;
+            font-weight: 700;
+            margin-bottom: 4px;
+        }
+
+        .dev-item p {
+            font-size: 0.85rem;
+            color: #cbd5e1;
+            margin: 0;
+        }
+
+        /* Generic Slide Content Grids */
+        .grid-2col {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 25px;
+            height: 100%;
+            align-items: center;
+        }
+
+        .grid-3col {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 20px;
+            height: 100%;
+            align-items: stretch;
+        }
+
+        .feature-card {
+            background: #ffffff;
+            border: 1.5px solid #e0e0e0;
+            border-radius: 10px;
+            padding: 20px;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.04);
+            display: flex;
+            flex-direction: column;
+            justify-content: flex-start;
+            border-top: 4px solid var(--accent-purple);
+        }
+
+        .feature-card h4 {
+            font-size: 1.1rem;
+            font-weight: 800;
+            color: #111111;
+            margin-bottom: 8px;
+        }
+
+        .feature-card p, .feature-card ul {
+            font-size: 0.88rem;
+            color: #424242;
+            line-height: 1.55;
+        }
+
+        .feature-card ul {
+            padding-left: 18px;
+            margin-top: 6px;
+        }
+
+        .feature-card li {
+            margin-bottom: 4px;
+        }
+
+        /* Code/Table Boxes */
+        .tech-badge {
+            display: inline-block;
+            background: #eef2ff;
+            color: #312e81;
+            font-weight: 700;
+            padding: 4px 10px;
+            border-radius: 6px;
+            font-size: 0.82rem;
+            margin-right: 6px;
+            margin-bottom: 6px;
+            border: 1px solid #c7d2fe;
+        }
+
+        /* Print Mode */
+        @media print {
+            body {
+                background: none !important;
+                padding: 0 !important;
+            }
+
+            .controls-bar {
+                display: none !important;
+            }
+
+            .stage {
+                max-width: 100% !important;
+                width: 100% !important;
+                box-shadow: none !important;
+                aspect-ratio: auto !important;
+                height: auto !important;
+            }
+
+            .slide {
+                position: relative !important;
+                display: flex !important;
+                page-break-after: always !important;
+                width: 100% !important;
+                height: 100vh !important;
+            }
+
+            @page {
+                size: landscape;
+                margin: 0;
+            }
+        }
+    </style>
+</head>
+<body>
+
+    <!-- Controls Toolbar (Top) -->
+    <div class="controls-bar">
+        <div class="controls-left">
+            <span style="font-weight: 800; font-size: 1.1rem; color: #ffffff; letter-spacing: 0.5px;">LearnMate PPT</span>
+            <select id="slideSelect" class="slide-select" onchange="goToSlide(parseInt(this.value))">
+                <option value="0">1. Title Slide (LearnMate MCA)</option>
+                <option value="1">2. Project Overview & Motivation</option>
+                <option value="2">3. Problem Statement & Solution</option>
+                <option value="3">4. Hardware & Software Requirements</option>
+                <option value="4">5. Technology Stack Specifications</option>
+                <option value="5">6. 3.3 Programming Environment (Architecture)</option>
+                <option value="6" selected>7. 3.3.1 About Front-End</option>
+                <option value="7">8. 3.3.2 About Back-End</option>
+                <option value="8">9. 3.4 Django MVT Workflow Pattern</option>
+                <option value="9">10. System Modules & User Roles</option>
+                <option value="10">11. Mistake-Based Revision Hub</option>
+                <option value="11">12. Quiz & Manual Admin Certificate</option>
+                <option value="12">13. Database Design & Relational Models</option>
+                <option value="13">14. Security & SQLite3 Database Architecture</option>
+                <option value="14">15. Testing & Validation Results</option>
+                <option value="15">16. Conclusion & Future Scope</option>
+            </select>
+        </div>
+
+        <div class="controls-right">
+            <button class="btn-ctrl" onclick="prevSlide()" title="Previous Slide (Left Arrow)">◀ Prev</button>
+            <span class="slide-counter" id="slideCounter">Slide 7 / 16</span>
+            <button class="btn-ctrl" onclick="nextSlide()" title="Next Slide (Right Arrow or Space)">Next ▶</button>
+            <button class="btn-ctrl btn-primary" onclick="toggleFullScreen()" title="Full Screen Presentation (F)">⛶ Fullscreen</button>
+            <button class="btn-ctrl" onclick="window.print()" title="Print / Export All Slides as PDF">🖨️ PDF</button>
+        </div>
+    </div>
+
+    <!-- Presentation Stage (16:9) -->
+    <div class="stage" id="presentationStage">
+
+        <!-- ============================================================== -->
+        <!-- SLIDE 1: TITLE SLIDE                                           -->
+        <!-- ============================================================== -->
+        <div class="slide slide-title-hero">
+            <div class="title-hero-header">
+                <div style="display: flex; align-items: center; gap: 12px;">
+                    <div style="background: var(--gunv-red); padding: 6px 12px; border-radius: 4px; font-weight: 800; font-size: 0.9rem; letter-spacing: 0.5px;">
+                        AMPICS • GANPAT UNIVERSITY
+                    </div>
+                    <span style="font-size: 0.85rem; opacity: 0.85; text-transform: uppercase; letter-spacing: 1px;">Department of Master of Computer Applications</span>
+                </div>
+                <div style="font-size: 0.85rem; font-weight: 600; opacity: 0.9;">
+                    Academic Year 2025 - 2026
+                </div>
+            </div>
+
+            <div>
+                <span style="background: rgba(255,255,255,0.15); padding: 4px 14px; border-radius: 20px; font-size: 0.85rem; font-weight: 700; letter-spacing: 1px; text-transform: uppercase;">
+                    MCA Project Presentation
+                </span>
+                <h1 class="title-hero-title" style="margin-top: 10px;">LearnMate</h1>
+                <p class="title-hero-tagline">
+                    A Centralized E-Learning & Revision Platform with Automated Mistake-Based Practice and Verified Course Completion Certification.
+                </p>
+            </div>
+
+            <div class="title-developers-grid">
+                <div class="dev-item">
+                    <p style="text-transform: uppercase; letter-spacing: 0.8px; font-weight: 700; color: #fca5a5;">Project Developer 1:</p>
+                    <h5>Vaghela Sumitkumar hirabhai</h5>
+                    <p>Enrollment No: <strong style="color: #ffffff;">25034211082</strong> • MCA Sem-II</p>
+                </div>
+                <div class="dev-item">
+                    <p style="text-transform: uppercase; letter-spacing: 0.8px; font-weight: 700; color: #fca5a5;">Project Developer 2:</p>
+                    <h5>Bahelim Uzer</h5>
+                    <p>Enrollment No: <strong style="color: #ffffff;">25034211005</strong> • MCA Sem-II</p>
+                </div>
+            </div>
+        </div>
+
+        <!-- ============================================================== -->
+        <!-- SLIDE 2: PROJECT OVERVIEW                                      -->
+        <!-- ============================================================== -->
+        <div class="slide">
+            <div class="slide-header">
+                <!-- GU Badge -->
+                <div class="gu-badge">
+                    <svg class="gu-badge-logo" viewBox="0 0 40 40" fill="none">
+                        <circle cx="20" cy="20" r="18" stroke="#ffffff" stroke-width="2"/>
+                        <path d="M20 8 L24 16 L32 16 L26 22 L28 30 L20 25 L12 30 L14 22 L8 16 L16 16 Z" fill="#ffffff"/>
+                    </svg>
+                    <div class="gu-badge-name">Ganpat<br>University</div>
+                    <div class="gu-badge-subtext">॥ विद्या परं भूषणम् ॥</div>
+                    <div class="gu-badge-institute">AMPICS</div>
+                </div>
+                <!-- Top Ribbon -->
+                <div class="gu-top-ribbon">
+                    <span>A SOCIALLY RESPONSIBLE UNIVERSITY</span>
+                </div>
+                <h2 class="slide-title">1.0 Project Overview & Motivation</h2>
+            </div>
+
+            <div class="slide-body">
+                <div class="grid-2col">
+                    <div class="feature-card" style="border-top-color: var(--gunv-red);">
+                        <h4>💡 Background & Context</h4>
+                        <p>Modern university curricula require students to master vast amounts of technical knowledge across multiple subjects like Python, PHP, and DBMS.</p>
+                        <p style="margin-top: 8px;">Students frequently suffer from fragmented study resources scattered across multiple drives, chat groups, and physical notebooks without any structured method to systematically identify and correct their mistakes.</p>
+                    </div>
+
+                    <div class="feature-card" style="border-top-color: var(--accent-purple);">
+                        <h4>🎯 Purpose of LearnMate</h4>
+                        <p><strong>LearnMate</strong> was engineered as an all-in-one centralized academic portal providing:</p>
+                        <ul>
+                            <li><strong>Structured Handouts:</strong> PDFs, PPTs, Drive links & embedded video lectures.</li>
+                            <li><strong>3D Flip Flashcards:</strong> Interactive digital flashcards for fast recall.</li>
+                            <li><strong>Practice Quizzes:</strong> Instant scoring and performance analytics.</li>
+                            <li><strong>Automated Mistake Revision:</strong> Dynamic tracking of incorrect answers.</li>
+                            <li><strong>Admin-Issued Certificates:</strong> Official completion certificates with unique serial verification.</li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+
+            <div class="slide-footer">
+                <span>LearnMate MCA Academic Project • Ganpat University (AMPICS)</span>
+                <span>Slide 2</span>
+            </div>
+        </div>
+
+        <!-- ============================================================== -->
+        <!-- SLIDE 3: PROBLEM STATEMENT & SOLUTION                          -->
+        <!-- ============================================================== -->
+        <div class="slide">
+            <div class="slide-header">
+                <div class="gu-badge">
+                    <svg class="gu-badge-logo" viewBox="0 0 40 40" fill="none">
+                        <circle cx="20" cy="20" r="18" stroke="#ffffff" stroke-width="2"/>
+                        <path d="M20 8 L24 16 L32 16 L26 22 L28 30 L20 25 L12 30 L14 22 L8 16 L16 16 Z" fill="#ffffff"/>
+                    </svg>
+                    <div class="gu-badge-name">Ganpat<br>University</div>
+                    <div class="gu-badge-subtext">॥ विद्या परं भूषणम् ॥</div>
+                    <div class="gu-badge-institute">AMPICS</div>
+                </div>
+                <div class="gu-top-ribbon">
+                    <span>A SOCIALLY RESPONSIBLE UNIVERSITY</span>
+                </div>
+                <h2 class="slide-title">2.0 Problem Statement vs. Proposed Solution</h2>
+            </div>
+
+            <div class="slide-body">
+                <div class="grid-2col">
+                    <div class="feature-card" style="border-top-color: #d32f2f; background: #fff8f8;">
+                        <h4 style="color: #b71c1c;">❌ Existing Limitations</h4>
+                        <ul>
+                            <li><strong>Scattered Study Material:</strong> Lecture notes, PPTs, and video links get lost across WhatsApp groups and drives.</li>
+                            <li><strong>No Active Recall:</strong> Traditional reading lacks rapid memory stimulation techniques like flashcard flipping.</li>
+                            <li><strong>Neglected Mistakes:</strong> After taking an exam or quiz, students rarely revisit questions they answered incorrectly.</li>
+                            <li><strong>No Real-Time Verification:</strong> Teachers lack a centralized dashboard to track attempts and manually authorize student course certificates.</li>
+                        </ul>
+                    </div>
+
+                    <div class="feature-card" style="border-top-color: #2e7d32; background: #f6fbf7;">
+                        <h4 style="color: #1b5e20;">✅ LearnMate Solution</h4>
+                        <ul>
+                            <li><strong>Centralized Subject Handouts:</strong> Direct PDF downloads, Google Drive shortcuts, and embedded video lectures.</li>
+                            <li><strong>Interactive 3D Flashcards:</strong> Active recall system with animated flip interaction and progress counters.</li>
+                            <li><strong>Smart Revision Hub:</strong> Incorrect quiz answers are auto-saved to an isolated revision hub until mastered through retakes.</li>
+                            <li><strong>Teacher-Authorized Credentialing:</strong> Quiz passes trigger administrative generation of certificates with serial numbers.</li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+
+            <div class="slide-footer">
+                <span>LearnMate MCA Academic Project • Ganpat University (AMPICS)</span>
+                <span>Slide 3</span>
+            </div>
+        </div>
+
+        <!-- ============================================================== -->
+        <!-- SLIDE 4: HARDWARE & SOFTWARE REQUIREMENTS                     -->
+        <!-- ============================================================== -->
+        <div class="slide">
+            <div class="slide-header">
+                <div class="gu-badge">
+                    <svg class="gu-badge-logo" viewBox="0 0 40 40" fill="none">
+                        <circle cx="20" cy="20" r="18" stroke="#ffffff" stroke-width="2"/>
+                        <path d="M20 8 L24 16 L32 16 L26 22 L28 30 L20 25 L12 30 L14 22 L8 16 L16 16 Z" fill="#ffffff"/>
+                    </svg>
+                    <div class="gu-badge-name">Ganpat<br>University</div>
+                    <div class="gu-badge-subtext">॥ विद्या परं भूषणम् ॥</div>
+                    <div class="gu-badge-institute">AMPICS</div>
+                </div>
+                <div class="gu-top-ribbon">
+                    <span>A SOCIALLY RESPONSIBLE UNIVERSITY</span>
+                </div>
+                <h2 class="slide-title">3.1 Hardware & Software Requirements</h2>
+            </div>
+
+            <div class="slide-body">
+                <div class="grid-2col">
+                    <div class="feature-card">
+                        <h4>💻 Hardware Requirements</h4>
+                        <table style="width: 100%; font-size: 0.85rem; border-collapse: collapse; margin-top: 10px;">
+                            <tr style="border-bottom: 1px solid #e0e0e0; height: 32px;">
+                                <td><strong>Processor:</strong></td>
+                                <td>Intel Core i3 / AMD Ryzen 3 or higher</td>
+                            </tr>
+                            <tr style="border-bottom: 1px solid #e0e0e0; height: 32px;">
+                                <td><strong>RAM:</strong></td>
+                                <td>4 GB Minimum (8 GB Recommended)</td>
+                            </tr>
+                            <tr style="border-bottom: 1px solid #e0e0e0; height: 32px;">
+                                <td><strong>Hard Disk Space:</strong></td>
+                                <td>1 GB Free Storage for SQLite / Media</td>
+                            </tr>
+                            <tr style="height: 32px;">
+                                <td><strong>Display:</strong></td>
+                                <td>1366 x 768 or Full HD 1080p Display</td>
+                            </tr>
+                        </table>
+                    </div>
+
+                    <div class="feature-card">
+                        <h4>⚙️ Software Requirements</h4>
+                        <table style="width: 100%; font-size: 0.85rem; border-collapse: collapse; margin-top: 10px;">
+                            <tr style="border-bottom: 1px solid #e0e0e0; height: 32px;">
+                                <td><strong>Operating System:</strong></td>
+                                <td>Windows 10 / 11, Linux (Ubuntu), or macOS</td>
+                            </tr>
+                            <tr style="border-bottom: 1px solid #e0e0e0; height: 32px;">
+                                <td><strong>Programming Language:</strong></td>
+                                <td>Python 3.10+ (Current: Python 3.13)</td>
+                            </tr>
+                            <tr style="border-bottom: 1px solid #e0e0e0; height: 32px;">
+                                <td><strong>Web Framework:</strong></td>
+                                <td>Django 5.x / 6.x (MVT Architecture)</td>
+                            </tr>
+                            <tr style="border-bottom: 1px solid #e0e0e0; height: 32px;">
+                                <td><strong>Database:</strong></td>
+                                <td>SQLite3 (Relational Embedded Database)</td>
+                            </tr>
+                            <tr style="height: 32px;">
+                                <td><strong>Web Browser:</strong></td>
+                                <td>Google Chrome, Mozilla Firefox, Microsoft Edge</td>
+                            </tr>
+                        </table>
+                    </div>
+                </div>
+            </div>
+
+            <div class="slide-footer">
+                <span>LearnMate MCA Academic Project • Ganpat University (AMPICS)</span>
+                <span>Slide 4</span>
+            </div>
+        </div>
+
+        <!-- ============================================================== -->
+        <!-- SLIDE 5: TECHNOLOGY STACK                                      -->
+        <!-- ============================================================== -->
+        <div class="slide">
+            <div class="slide-header">
+                <div class="gu-badge">
+                    <svg class="gu-badge-logo" viewBox="0 0 40 40" fill="none">
+                        <circle cx="20" cy="20" r="18" stroke="#ffffff" stroke-width="2"/>
+                        <path d="M20 8 L24 16 L32 16 L26 22 L28 30 L20 25 L12 30 L14 22 L8 16 L16 16 Z" fill="#ffffff"/>
+                    </svg>
+                    <div class="gu-badge-name">Ganpat<br>University</div>
+                    <div class="gu-badge-subtext">॥ विद्या परं भूषणम् ॥</div>
+                    <div class="gu-badge-institute">AMPICS</div>
+                </div>
+                <div class="gu-top-ribbon">
+                    <span>A SOCIALLY RESPONSIBLE UNIVERSITY</span>
+                </div>
+                <h2 class="slide-title">3.2 Technology Stack Overview</h2>
+            </div>
+
+            <div class="slide-body">
+                <div class="grid-3col">
+                    <div class="feature-card" style="border-top-color: #2563eb;">
+                        <h4>🎨 Front-End</h4>
+                        <p>Modern responsive presentation layer for desktop, tablet and mobile devices.</p>
+                        <div style="margin-top: 12px;">
+                            <span class="tech-badge">HTML5</span>
+                            <span class="tech-badge">CSS3 Custom</span>
+                            <span class="tech-badge">Bootstrap 5</span>
+                            <span class="tech-badge">Vanilla JavaScript</span>
+                            <span class="tech-badge">Responsive Flexbox</span>
+                        </div>
+                    </div>
+
+                    <div class="feature-card" style="border-top-color: #059669;">
+                        <h4>⚡ Back-End</h4>
+                        <p>High-performance Python backend powered by Django's secure Model-View-Template engine.</p>
+                        <div style="margin-top: 12px;">
+                            <span class="tech-badge">Python 3.13</span>
+                            <span class="tech-badge">Django Framework</span>
+                            <span class="tech-badge">Django ORM</span>
+                            <span class="tech-badge">Session Auth</span>
+                            <span class="tech-badge">CSRF Security</span>
+                        </div>
+                    </div>
+
+                    <div class="feature-card" style="border-top-color: #d97706;">
+                        <h4>🗄️ Database & Tools</h4>
+                        <p>Robust relational data management with embedded zero-configuration SQLite3 engine.</p>
+                        <div style="margin-top: 12px;">
+                            <span class="tech-badge">SQLite3 (Primary Database)</span>
+                            <span class="tech-badge">DB Browser for SQLite</span>
+                            <span class="tech-badge">Visual Studio Code</span>
+                            <span class="tech-badge">Git & GitHub</span>
+                            <span class="tech-badge">Pillow (Image Processing)</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="slide-footer">
+                <span>LearnMate MCA Academic Project • Ganpat University (AMPICS)</span>
+                <span>Slide 5</span>
+            </div>
+        </div>
+
+        <!-- ============================================================== -->
+        <!-- SLIDE 6: 3.3 PROGRAMMING ENVIRONMENT (EXACT USER PHOTO)       -->
+        <!-- ============================================================== -->
+        <div class="slide">
+            <!-- Header matching photo -->
+            <div class="slide-header">
+                <!-- Red University Emblem Badge -->
+                <div class="gu-badge">
+                    <svg class="gu-badge-logo" viewBox="0 0 40 40" fill="none">
+                        <circle cx="20" cy="20" r="18" stroke="#ffffff" stroke-width="2"/>
+                        <path d="M20 8 L24 16 L32 16 L26 22 L28 30 L20 25 L12 30 L14 22 L8 16 L16 16 Z" fill="#ffffff"/>
+                    </svg>
+                    <div class="gu-badge-name">Ganpat<br>University</div>
+                    <div class="gu-badge-subtext">॥ विद्या परं भूषणम् ॥</div>
+                    <div class="gu-badge-institute">AMPICS</div>
+                </div>
+
+                <!-- Top Ribbon -->
+                <div class="gu-top-ribbon">
+                    <span>A SOCIALLY RESPONSIBLE UNIVERSITY</span>
+                </div>
+
+                <!-- Title from Photo -->
+                <h2 class="slide-title">3.3 Programming Environment</h2>
+            </div>
+
+            <!-- Slide Body with Architecture Diagram -->
+            <div class="slide-body">
+                <div class="diagram-container">
+                    
+                    <!-- Top Row: Front-End, Django MVT & APIs, Back-End -->
+                    <div class="diagram-top-row">
+                        
+                        <!-- Box 1: FRONT-END -->
+                        <div class="arch-box box-frontend">
+                            <div class="arch-box-title">FRONT-END</div>
+                            <div class="arch-box-line1">HTML5 • CSS3</div>
+                            <div class="arch-box-line1">Bootstrap 5 • JavaScript</div>
+                            <div class="arch-box-line2">User Interface &amp; Student Dashboard</div>
+                        </div>
+
+                        <!-- Left Arrow pointing to Center Box -->
+                        <svg class="arrow-left-to-center" viewBox="0 0 32 20">
+                            <line x1="2" y1="10" x2="26" y2="10" stroke="#111111" stroke-width="2.5"/>
+                            <polygon points="24,5 31,10 24,15" fill="#111111"/>
+                        </svg>
+
+                        <!-- Box 2: DJANGO MVT & APIs -->
+                        <div class="arch-box box-center-mvt">
+                            <div class="arch-box-title">DJANGO MVT &amp; APIs</div>
+                            <div class="arch-box-line1">HTTP Request / Response • Template Context</div>
+                            <div class="arch-box-line2">Front-End &harr; Back-End &harr; External APIs</div>
+                        </div>
+
+                        <!-- Right Arrow pointing to Center Box -->
+                        <svg class="arrow-right-to-center" viewBox="0 0 32 20">
+                            <line x1="30" y1="10" x2="6" y2="10" stroke="#111111" stroke-width="2.5"/>
+                            <polygon points="8,5 1,10 8,15" fill="#111111"/>
+                        </svg>
+
+                        <!-- Box 3: BACK-END -->
+                        <div class="arch-box box-backend">
+                            <div class="arch-box-title">BACK-END</div>
+                            <div class="arch-box-line1">Python 3.x • Django Framework</div>
+                            <div class="arch-box-line1">Django ORM • Built-in Authentication</div>
+                            <div class="arch-box-line2">Business Logic &amp; Server-side Processing</div>
+                        </div>
+
+                    </div>
+
+                    <!-- Down Arrow pointing from Center Box to Database -->
+                    <svg class="arrow-down-to-db" viewBox="0 0 20 38">
+                        <line x1="10" y1="2" x2="10" y2="30" stroke="#111111" stroke-width="2.5"/>
+                        <polygon points="5,28 10,36 15,28" fill="#111111"/>
+                    </svg>
+
+                    <!-- Bottom Box: DATABASE -->
+                    <div class="arch-box box-database">
+                        <div class="arch-box-title">DATABASE</div>
+                        <div class="arch-box-line1">SQLite3</div>
+                        <div class="arch-box-line2">Persistent relational application data</div>
+                    </div>
+
+                </div>
+            </div>
+
+            <!-- Footer matching standard slide -->
+            <div class="slide-footer">
+                <span>LearnMate MCA Academic Project • Ganpat University (AMPICS)</span>
+                <span>Slide 6</span>
+            </div>
+        </div>
+
+        <!-- ============================================================== -->
+        <!-- SLIDE 7: 3.3.1 ABOUT FRONT-END (EXACT USER PHOTO 1)            -->
+        <!-- ============================================================== -->
+        <div class="slide active">
+            <div class="slide-header">
+                <div class="gu-badge">
+                    <svg class="gu-badge-logo" viewBox="0 0 40 40" fill="none">
+                        <circle cx="20" cy="20" r="18" stroke="#ffffff" stroke-width="2"/>
+                        <path d="M20 8 L24 16 L32 16 L26 22 L28 30 L20 25 L12 30 L14 22 L8 16 L16 16 Z" fill="#ffffff"/>
+                    </svg>
+                    <div class="gu-badge-name">Ganpat<br>University</div>
+                    <div class="gu-badge-subtext">॥ विद्या परं भूषणम् ॥</div>
+                    <div class="gu-badge-institute">AMPICS</div>
+                </div>
+                <div class="gu-top-ribbon">
+                    <span>A SOCIALLY RESPONSIBLE UNIVERSITY</span>
+                </div>
+                <h2 class="slide-title">3.3.1 About Front-End</h2>
+            </div>
+
+            <div class="slide-body" style="padding-top: 25px; display: flex; flex-direction: column; justify-content: flex-start; gap: 32px;">
+                <!-- Top Header Box (Left-aligned) -->
+                <div class="subenv-top-box">
+                    <div class="subenv-top-title">HTML5 + BOOTSTRAP 4.3.1</div>
+                    <div class="subenv-top-sub">Responsive • Component-based • Student-Centric Front-End Architecture</div>
+                </div>
+
+                <!-- Bottom 3 Columns Row -->
+                <div style="display: grid; grid-template-columns: repeat(3, 1fr); gap: 20px; width: 100%;">
+                    <div class="subenv-card">
+                        <div class="subenv-card-title">HTML5 &amp; DTL</div>
+                        <div class="subenv-card-text">
+                            Semantic structure, native date picker widget &amp; Django Template Language inheritance
+                        </div>
+                    </div>
+
+                    <div class="subenv-card">
+                        <div class="subenv-card-title">BOOTSTRAP 4 &amp; CSS3</div>
+                        <div class="subenv-card-text">
+                            12-Column responsive grid, custom cards, soft shadows &amp; clean academic styling
+                        </div>
+                    </div>
+
+                    <div class="subenv-card">
+                        <div class="subenv-card-title">JAVASCRIPT &amp; jQUERY</div>
+                        <div class="subenv-card-text">
+                            Dynamic DOM, mobile navbar toggling, dismissible toasts &amp; pronunciation audio player
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="slide-footer">
+                <span>LearnMate MCA Academic Project • Ganpat University (AMPICS)</span>
+                <span>Slide 7</span>
+            </div>
+        </div>
+
+        <!-- ============================================================== -->
+        <!-- SLIDE 8: 3.3.2 ABOUT BACK-END (EXACT USER PHOTO 2)             -->
+        <!-- ============================================================== -->
+        <div class="slide">
+            <div class="slide-header">
+                <div class="gu-badge">
+                    <svg class="gu-badge-logo" viewBox="0 0 40 40" fill="none">
+                        <circle cx="20" cy="20" r="18" stroke="#ffffff" stroke-width="2"/>
+                        <path d="M20 8 L24 16 L32 16 L26 22 L28 30 L20 25 L12 30 L14 22 L8 16 L16 16 Z" fill="#ffffff"/>
+                    </svg>
+                    <div class="gu-badge-name">Ganpat<br>University</div>
+                    <div class="gu-badge-subtext">॥ विद्या परं भूषणम् ॥</div>
+                    <div class="gu-badge-institute">AMPICS</div>
+                </div>
+                <div class="gu-top-ribbon">
+                    <span>A SOCIALLY RESPONSIBLE UNIVERSITY</span>
+                </div>
+                <h2 class="slide-title">3.3.2 About Back-End</h2>
+            </div>
+
+            <div class="slide-body" style="padding-top: 15px; display: flex; flex-direction: column; justify-content: flex-start; gap: 16px;">
+                <!-- Top Header Box (Left-aligned) -->
+                <div class="subenv-top-box" style="max-width: 580px;">
+                    <div class="subenv-top-title">PYTHON 3.x + DJANGO WEB FRAMEWORK</div>
+                    <div class="subenv-top-sub">Model-View-Template (MVT) • Secure, Scalable &amp; API-Driven Architecture</div>
+                </div>
+
+                <!-- Middle 3 Columns Row -->
+                <div style="display: grid; grid-template-columns: repeat(3, 1fr); gap: 16px; width: 100%;">
+                    <div class="subenv-card">
+                        <div class="subenv-card-title">MVT ARCHITECTURE</div>
+                        <div class="subenv-card-text">
+                            Models &rarr; Views &rarr; Templates<br>
+                            Django ModelForms for data validation<br>
+                            Modular separation of application concerns
+                        </div>
+                    </div>
+
+                    <div class="subenv-card">
+                        <div class="subenv-card-title">SECURITY &amp; AUTHENTICATION</div>
+                        <div class="subenv-card-text">
+                            Django Auth • PBKDF2 password hashing<br>
+                            CSRF token protection on all forms<br>
+                            @login_required session-based access control
+                        </div>
+                    </div>
+
+                    <div class="subenv-card">
+                        <div class="subenv-card-title">EXTERNAL API INTEGRATIONS</div>
+                        <div class="subenv-card-text">
+                            Google Gemini AI (AI Tutor chatbot)<br>
+                            OpenLibrary Books • YouTube Search<br>
+                            Wiktionary &amp; Wikipedia APIs
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Bottom 2 Centered Columns Row -->
+                <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 18px; width: 80%; margin: 0 auto;">
+                    <div class="subenv-card">
+                        <div class="subenv-card-title">ORM &amp; DATABASE</div>
+                        <div class="subenv-card-text">
+                            Django ORM &rarr; SQLite3 (db.sqlite3)<br>
+                            SQL injection prevention &amp; schema migrations<br>
+                            Automated user-isolated database mapping
+                        </div>
+                    </div>
+
+                    <div class="subenv-card">
+                        <div class="subenv-card-title">SUPPORTING TOOLS &amp; RUNTIME</div>
+                        <div class="subenv-card-text">
+                            Python Virtual Environment (venv)<br>
+                            Django Admin Console for faculty/admin<br>
+                            WSGI dev server &amp; automated batch runner (run.bat)
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="slide-footer">
+                <span>LearnMate MCA Academic Project • Ganpat University (AMPICS)</span>
+                <span>Slide 8</span>
+            </div>
+        </div>
+
+        <!-- ============================================================== -->
+        <!-- SLIDE 9: DJANGO MVT ARCHITECTURE WORKFLOW                      -->
+        <!-- ============================================================== -->
+        <div class="slide">
+            <div class="slide-header">
+                <div class="gu-badge">
+                    <svg class="gu-badge-logo" viewBox="0 0 40 40" fill="none">
+                        <circle cx="20" cy="20" r="18" stroke="#ffffff" stroke-width="2"/>
+                        <path d="M20 8 L24 16 L32 16 L26 22 L28 30 L20 25 L12 30 L14 22 L8 16 L16 16 Z" fill="#ffffff"/>
+                    </svg>
+                    <div class="gu-badge-name">Ganpat<br>University</div>
+                    <div class="gu-badge-subtext">॥ विद्या परं भूषणम् ॥</div>
+                    <div class="gu-badge-institute">AMPICS</div>
+                </div>
+                <div class="gu-top-ribbon">
+                    <span>A SOCIALLY RESPONSIBLE UNIVERSITY</span>
+                </div>
+                <h2 class="slide-title">3.4 Django MVT Architecture Workflow</h2>
+            </div>
+
+            <div class="slide-body">
+                <div class="grid-3col">
+                    <div class="feature-card" style="border-top-color: #2563eb;">
+                        <h4>1. Model (Data)</h4>
+                        <p>Django ORM models define the relational schema in pure Python code:</p>
+                        <ul>
+                            <li><strong>Subject:</strong> Course title, code, cover image.</li>
+                            <li><strong>StudyMaterial:</strong> Handouts, PPTs, Videos, Drive links.</li>
+                            <li><strong>Flashcard:</strong> Front question &amp; back answer.</li>
+                            <li><strong>Quiz &amp; QuizQuestion:</strong> MCQs with A/B/C/D choices.</li>
+                        </ul>
+                    </div>
+
+                    <div class="feature-card" style="border-top-color: #7c3aed;">
+                        <h4>2. View (Logic)</h4>
+                        <p>Python controllers handling business logic, user auth &amp; queries:</p>
+                        <ul>
+                            <li><strong>take_quiz:</strong> Randomizes questions and tracks timer.</li>
+                            <li><strong>submit_quiz:</strong> Evaluates answers &amp; records score.</li>
+                            <li><strong>revision_hub:</strong> Filters student mistake logs.</li>
+                            <li><strong>admin_generate_certificate:</strong> Issues serial numbers.</li>
+                        </ul>
+                    </div>
+
+                    <div class="feature-card" style="border-top-color: #db2777;">
+                        <h4>3. Template (UI)</h4>
+                        <p>HTML5 presentation dynamic templates with Django Template Language (DTL):</p>
+                        <ul>
+                            <li><strong>base.html:</strong> Universal navbar, footer, auth context.</li>
+                            <li><strong>course_detail.html:</strong> Handouts, flashcards &amp; quizzes.</li>
+                            <li><strong>revision.html:</strong> Mistake cards with red/green highlights.</li>
+                            <li><strong>certificate_view.html:</strong> Printable official diploma.</li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+
+            <div class="slide-footer">
+                <span>LearnMate MCA Academic Project • Ganpat University (AMPICS)</span>
+                <span>Slide 9</span>
+            </div>
+        </div>
+
+        <!-- ============================================================== -->
+        <!-- SLIDE 8: SYSTEM MODULES & ROLES                               -->
+        <!-- ============================================================== -->
+        <div class="slide">
+            <div class="slide-header">
+                <div class="gu-badge">
+                    <svg class="gu-badge-logo" viewBox="0 0 40 40" fill="none">
+                        <circle cx="20" cy="20" r="18" stroke="#ffffff" stroke-width="2"/>
+                        <path d="M20 8 L24 16 L32 16 L26 22 L28 30 L20 25 L12 30 L14 22 L8 16 L16 16 Z" fill="#ffffff"/>
+                    </svg>
+                    <div class="gu-badge-name">Ganpat<br>University</div>
+                    <div class="gu-badge-subtext">॥ विद्या परं भूषणम् ॥</div>
+                    <div class="gu-badge-institute">AMPICS</div>
+                </div>
+                <div class="gu-top-ribbon">
+                    <span>A SOCIALLY RESPONSIBLE UNIVERSITY</span>
+                </div>
+                <h2 class="slide-title">4.1 User Roles & Functional Modules</h2>
+            </div>
+
+            <div class="slide-body">
+                <div class="grid-2col">
+                    <div class="feature-card" style="border-top-color: #2563eb;">
+                        <h4>🎓 Student Portal Modules</h4>
+                        <ul>
+                            <li><strong>Authentication:</strong> Secure Registration, Login, and personalized Profile with total learning stats.</li>
+                            <li><strong>Subject Hub:</strong> Explore enrolled courses, stream lectures, download PDF handouts, and bookmark key notes.</li>
+                            <li><strong>3D Flashcard Player:</strong> Interactive flip animations with instant front/back reveal.</li>
+                            <li><strong>Practice Quiz Engine:</strong> Timed assessments with automated scoring and instant feedback.</li>
+                            <li><strong>Mistake Revision Hub:</strong> Isolated practice deck showing prior incorrect answers in red and correct in green.</li>
+                            <li><strong>Earned Certificates:</strong> View and print official certificates once authorized by admin.</li>
+                        </ul>
+                    </div>
+
+                    <div class="feature-card" style="border-top-color: var(--gunv-red);">
+                        <h4>👨‍🏫 Admin / Teacher Portal Modules</h4>
+                        <ul>
+                            <li><strong>Admin Dashboard:</strong> Real-time overview of total students, courses, quizzes, flashcards &amp; pending certificates.</li>
+                            <li><strong>Course Management:</strong> Create, edit, and manage academic subjects and cover photos.</li>
+                            <li><strong>Materials Manager:</strong> Upload PDFs, PPTs, Drive links and YouTube/lecture URLs.</li>
+                            <li><strong>Interactive Deck Builder:</strong> Add, edit, or delete digital flashcards per subject.</li>
+                            <li><strong>Assessment Builder:</strong> Create quizzes, configure passing criteria, and manage MCQ options.</li>
+                            <li><strong>Certificate Issuance Hub:</strong> Review student quiz passes and click <em>"Generate Certificate"</em> to authorize credentials.</li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+
+            <div class="slide-footer">
+                <span>LearnMate MCA Academic Project • Ganpat University (AMPICS)</span>
+                <span>Slide 10</span>
+            </div>
+        </div>
+
+        <!-- ============================================================== -->
+        <!-- SLIDE 11: MISTAKE-BASED REVISION HUB                           -->
+        <!-- ============================================================== -->
+        <div class="slide">
+            <div class="slide-header">
+                <div class="gu-badge">
+                    <svg class="gu-badge-logo" viewBox="0 0 40 40" fill="none">
+                        <circle cx="20" cy="20" r="18" stroke="#ffffff" stroke-width="2"/>
+                        <path d="M20 8 L24 16 L32 16 L26 22 L28 30 L20 25 L12 30 L14 22 L8 16 L16 16 Z" fill="#ffffff"/>
+                    </svg>
+                    <div class="gu-badge-name">Ganpat<br>University</div>
+                    <div class="gu-badge-subtext">॥ विद्या परं भूषणम् ॥</div>
+                    <div class="gu-badge-institute">AMPICS</div>
+                </div>
+                <div class="gu-top-ribbon">
+                    <span>A SOCIALLY RESPONSIBLE UNIVERSITY</span>
+                </div>
+                <h2 class="slide-title">4.2 Key Feature: Mistake-Based Revision Hub</h2>
+            </div>
+
+            <div class="slide-body">
+                <div class="grid-2col">
+                    <div class="feature-card">
+                        <h4>🔄 How the Revision Engine Works</h4>
+                        <ol style="font-size: 0.88rem; color: #424242; padding-left: 18px; line-height: 1.6;">
+                            <li><strong>Automatic Mistake Detection:</strong> When a student submits a quiz, any question answered incorrectly is automatically flagged and saved into the <code>Revision</code> model with status <code>'Pending'</code>.</li>
+                            <li><strong>Subject-Wise Filtering:</strong> Students select any subject (e.g., Python, DBMS) to view only mistakes pertinent to that specific course.</li>
+                            <li><strong>Visual Mistake Comparison:</strong> The selected wrong answer is vividly highlighted in <span style="color: #d32f2f; font-weight: 700;">RED</span>, while the true correct answer is highlighted in <span style="color: #2e7d32; font-weight: 700;">GREEN</span>.</li>
+                            <li><strong>Targeted Retake Quiz:</strong> A dynamic <em>"Retake Quiz"</em> is generated containing ONLY the pending mistakes.</li>
+                            <li><strong>Automatic Mastery:</strong> Answering correctly updates the question to <code>'Mastered'</code>!</li>
+                        </ol>
+                    </div>
+
+                    <div class="feature-card" style="border-top-color: #059669; background: #fbfdff;">
+                        <h4>📊 Pedagogical Benefits</h4>
+                        <p>Traditional learning platforms force students to repeat entire 20-question quizzes to practice the 2 questions they missed.</p>
+                        <div style="background: #ffffff; border: 1.5px solid #e0e7ff; border-radius: 8px; padding: 12px; margin-top: 10px;">
+                            <strong style="color: var(--accent-purple);">Adaptive Spaced Repetition:</strong>
+                            <p style="font-size: 0.82rem; margin-top: 4px; color: #475569;">
+                                Saves up to 75% of revision time by directing student focus strictly to demonstrated weaknesses.
+                            </p>
+                        </div>
+                        <div style="background: #ffffff; border: 1.5px solid #d1fae5; border-radius: 8px; padding: 12px; margin-top: 10px;">
+                            <strong style="color: #059669;">Confidence &amp; Retention:</strong>
+                            <p style="font-size: 0.82rem; margin-top: 4px; color: #475569;">
+                                Ensures 100% concept mastery before university semester examinations and campus placement technical interviews.
+                            </p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="slide-footer">
+                <span>LearnMate MCA Academic Project • Ganpat University (AMPICS)</span>
+                <span>Slide 11</span>
+            </div>
+        </div>
+
+        <!-- ============================================================== -->
+        <!-- SLIDE 12: CERTIFICATE APPROVAL WORKFLOW                       -->
+        <!-- ============================================================== -->
+        <div class="slide">
+            <div class="slide-header">
+                <div class="gu-badge">
+                    <svg class="gu-badge-logo" viewBox="0 0 40 40" fill="none">
+                        <circle cx="20" cy="20" r="18" stroke="#ffffff" stroke-width="2"/>
+                        <path d="M20 8 L24 16 L32 16 L26 22 L28 30 L20 25 L12 30 L14 22 L8 16 L16 16 Z" fill="#ffffff"/>
+                    </svg>
+                    <div class="gu-badge-name">Ganpat<br>University</div>
+                    <div class="gu-badge-subtext">॥ विद्या परं भूषणम् ॥</div>
+                    <div class="gu-badge-institute">AMPICS</div>
+                </div>
+                <div class="gu-top-ribbon">
+                    <span>A SOCIALLY RESPONSIBLE UNIVERSITY</span>
+                </div>
+                <h2 class="slide-title">4.3 Admin Certificate Generation Workflow</h2>
+            </div>
+
+            <div class="slide-body">
+                <div style="display: flex; justify-content: space-between; align-items: center; gap: 12px; margin-bottom: 20px;">
+                    <div class="feature-card" style="flex: 1; text-align: center; border-top-color: #2563eb;">
+                        <span style="font-size: 1.8rem;">📝</span>
+                        <h4 style="margin-top: 6px;">Step 1</h4>
+                        <p style="font-size: 0.82rem;">Student completes subject quiz &amp; achieves passing score (Pass status).</p>
+                    </div>
+                    <span style="font-size: 1.5rem; font-weight: 800; color: #9e9e9e;">➔</span>
+                    <div class="feature-card" style="flex: 1; text-align: center; border-top-color: #f59e0b;">
+                        <span style="font-size: 1.8rem;">⏳</span>
+                        <h4 style="margin-top: 6px;">Step 2</h4>
+                        <p style="font-size: 0.82rem;">Certificate is held in pending status. Request appears on Admin Portal.</p>
+                    </div>
+                    <span style="font-size: 1.5rem; font-weight: 800; color: #9e9e9e;">➔</span>
+                    <div class="feature-card" style="flex: 1; text-align: center; border-top-color: var(--gunv-red);">
+                        <span style="font-size: 1.8rem;">🎓</span>
+                        <h4 style="margin-top: 6px;">Step 3</h4>
+                        <p style="font-size: 0.82rem;">Admin clicks <strong>"Generate Certificate"</strong> to authorize credential.</p>
+                    </div>
+                    <span style="font-size: 1.5rem; font-weight: 800; color: #9e9e9e;">➔</span>
+                    <div class="feature-card" style="flex: 1; text-align: center; border-top-color: #059669;">
+                        <span style="font-size: 1.8rem;">🖨️</span>
+                        <h4 style="margin-top: 6px;">Step 4</h4>
+                        <p style="font-size: 0.82rem;">Sequential Certificate No (<code>1, 2, 3...</code>) issued. Both Admin &amp; Student can view/print.</p>
+                    </div>
+                </div>
+
+                <div class="feature-card" style="background: #f8fafc; border-top-color: var(--accent-purple);">
+                    <h4>🔐 Academic Verification Integrity</h4>
+                    <p style="font-size: 0.85rem; color: #475569;">
+                        By requiring administrative validation before certificate issuance, LearnMate preserves academic credentials from cheating and automated bots, ensuring all issued certificates correspond to verified student achievements.
+                    </p>
+                </div>
+            </div>
+
+            <div class="slide-footer">
+                <span>LearnMate MCA Academic Project • Ganpat University (AMPICS)</span>
+                <span>Slide 12</span>
+            </div>
+        </div>
+
+        <!-- ============================================================== -->
+        <!-- SLIDE 13: DATABASE SCHEMA                                      -->
+        <!-- ============================================================== -->
+        <div class="slide">
+            <div class="slide-header">
+                <div class="gu-badge">
+                    <svg class="gu-badge-logo" viewBox="0 0 40 40" fill="none">
+                        <circle cx="20" cy="20" r="18" stroke="#ffffff" stroke-width="2"/>
+                        <path d="M20 8 L24 16 L32 16 L26 22 L28 30 L20 25 L12 30 L14 22 L8 16 L16 16 Z" fill="#ffffff"/>
+                    </svg>
+                    <div class="gu-badge-name">Ganpat<br>University</div>
+                    <div class="gu-badge-subtext">॥ विद्या परं भूषणम् ॥</div>
+                    <div class="gu-badge-institute">AMPICS</div>
+                </div>
+                <div class="gu-top-ribbon">
+                    <span>A SOCIALLY RESPONSIBLE UNIVERSITY</span>
+                </div>
+                <h2 class="slide-title">5.0 Database Design & Relational Models</h2>
+            </div>
+
+            <div class="slide-body">
+                <div class="grid-3col">
+                    <div class="feature-card">
+                        <h4>📚 Course Core Models</h4>
+                        <ul>
+                            <li><code>Subject</code>: Primary key, subject name, code, description, image.</li>
+                            <li><code>StudyMaterial</code>: Subject FK, title, material_type (PDF, PPT, Video), drive_link.</li>
+                            <li><code>Flashcard</code>: Subject FK, question prompt, answer explanation.</li>
+                        </ul>
+                    </div>
+
+                    <div class="feature-card">
+                        <h4>📝 Assessment Models</h4>
+                        <ul>
+                            <li><code>Quiz</code>: Subject FK, title, total_questions, passing_marks.</li>
+                            <li><code>QuizQuestion</code>: Quiz FK, text, 4 options (A/B/C/D), correct_answer.</li>
+                            <li><code>QuizAttempt</code>: Student FK, Quiz FK, timestamp, completion status.</li>
+                            <li><code>QuizAnswer</code>: Attempt FK, Question FK, selected_answer, is_correct.</li>
+                        </ul>
+                    </div>
+
+                    <div class="feature-card">
+                        <h4>🎯 Revision &amp; Credentials</h4>
+                        <ul>
+                            <li><code>QuizResult</code>: Attempt OneToOne, score, total, percentage, Pass/Fail.</li>
+                            <li><code>Revision</code>: Student FK, Question FK, status (Pending/Mastered).</li>
+                            <li><code>Certificate</code>: Student FK, Subject FK, unique cert_no, issue_date.</li>
+                            <li><code>Bookmark</code>: Student FK, material FK, flashcard FK.</li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+
+            <div class="slide-footer">
+                <span>LearnMate MCA Academic Project • Ganpat University (AMPICS)</span>
+                <span>Slide 13</span>
+            </div>
+        </div>
+
+        <!-- ============================================================== -->
+        <!-- SLIDE 14: SECURITY FEATURES                                    -->
+        <!-- ============================================================== -->
+        <div class="slide">
+            <div class="slide-header">
+                <div class="gu-badge">
+                    <svg class="gu-badge-logo" viewBox="0 0 40 40" fill="none">
+                        <circle cx="20" cy="20" r="18" stroke="#ffffff" stroke-width="2"/>
+                        <path d="M20 8 L24 16 L32 16 L26 22 L28 30 L20 25 L12 30 L14 22 L8 16 L16 16 Z" fill="#ffffff"/>
+                    </svg>
+                    <div class="gu-badge-name">Ganpat<br>University</div>
+                    <div class="gu-badge-subtext">॥ विद्या परं भूषणम् ॥</div>
+                    <div class="gu-badge-institute">AMPICS</div>
+                </div>
+                <div class="gu-top-ribbon">
+                    <span>A SOCIALLY RESPONSIBLE UNIVERSITY</span>
+                </div>
+                <h2 class="slide-title">6.0 Security & Implementation Highlights</h2>
+            </div>
+
+            <div class="slide-body">
+                <div class="grid-2col">
+                    <div class="feature-card" style="border-top-color: #059669;">
+                        <h4>🛡️ Security Implementation</h4>
+                        <ul>
+                            <li><strong>CSRF Protection:</strong> All form submissions (login, registration, quiz submit) are token-signed against cross-site request forgery.</li>
+                            <li><strong>Password Hashing:</strong> PBKDF2 with SHA-256 algorithm ensures zero plaintext credentials in database.</li>
+                            <li><strong>Role-Based Access Control:</strong> Strict <code>@login_required</code> and <code>@user_passes_test(is_admin)</code> decorators prevent student access to admin endpoints.</li>
+                            <li><strong>SQL Injection Immunity:</strong> Django ORM parameterized SQL statements completely eliminate SQLi vulnerabilities.</li>
+                        </ul>
+                    </div>
+
+                    <div class="feature-card" style="border-top-color: #2563eb;">
+                        <h4>🗄️ Relational SQLite3 Architecture</h4>
+                        <ul>
+                            <li><strong>Single Embedded File Database:</strong> Atomic disk-based persistence (<code>db.sqlite3</code>) eliminates complex background daemon requirements and port 3306 conflicts.</li>
+                            <li><strong>Full ACID Transaction Support:</strong> Guarantees transaction atomicity, consistency, isolation, and durability during simultaneous student quiz evaluations and certificate records.</li>
+                            <li><strong>Automated Data Seeding:</strong> Included <code>seed_data.py</code> script automatically populates academic MCA courses, flashcards, quizzes, and administrative accounts.</li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+
+            <div class="slide-footer">
+                <span>LearnMate MCA Academic Project • Ganpat University (AMPICS)</span>
+                <span>Slide 14</span>
+            </div>
+        </div>
+
+        <!-- ============================================================== -->
+        <!-- SLIDE 15: TESTING & QUALITY ASSURANCE                          -->
+        <!-- ============================================================== -->
+        <div class="slide">
+            <div class="slide-header">
+                <div class="gu-badge">
+                    <svg class="gu-badge-logo" viewBox="0 0 40 40" fill="none">
+                        <circle cx="20" cy="20" r="18" stroke="#ffffff" stroke-width="2"/>
+                        <path d="M20 8 L24 16 L32 16 L26 22 L28 30 L20 25 L12 30 L14 22 L8 16 L16 16 Z" fill="#ffffff"/>
+                    </svg>
+                    <div class="gu-badge-name">Ganpat<br>University</div>
+                    <div class="gu-badge-subtext">॥ विद्या परं भूषणम् ॥</div>
+                    <div class="gu-badge-institute">AMPICS</div>
+                </div>
+                <div class="gu-top-ribbon">
+                    <span>A SOCIALLY RESPONSIBLE UNIVERSITY</span>
+                </div>
+                <h2 class="slide-title">7.0 Testing & Quality Assurance</h2>
+            </div>
+
+            <div class="slide-body">
+                <div class="feature-card" style="height: 100%; border-top-color: #0284c7;">
+                    <h4>🧪 Testing Methodologies Applied</h4>
+                    <table style="width: 100%; font-size: 0.85rem; border-collapse: collapse; margin-top: 12px;">
+                        <thead>
+                            <tr style="background: #f1f5f9; text-align: left; height: 36px; border-bottom: 2px solid #cbd5e1;">
+                                <th style="padding: 8px;">Test Type</th>
+                                <th style="padding: 8px;">Test Focus</th>
+                                <th style="padding: 8px;">Expected Result</th>
+                                <th style="padding: 8px;">Status</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr style="border-bottom: 1px solid #e2e8f0; height: 38px;">
+                                <td style="padding: 8px;"><strong>Unit Testing</strong></td>
+                                <td style="padding: 8px;">Model validation &amp; Unique Certificate number generation</td>
+                                <td style="padding: 8px;">Sequential <code>1, 2, 3...</code> number produced</td>
+                                <td style="padding: 8px; color: #16a34a; font-weight: 700;">PASSED</td>
+                            </tr>
+                            <tr style="border-bottom: 1px solid #e2e8f0; height: 38px;">
+                                <td style="padding: 8px;"><strong>Integration Testing</strong></td>
+                                <td style="padding: 8px;">Quiz submit &rarr; Result created &rarr; Revision record flagged</td>
+                                <td style="padding: 8px;">Incorrect answers stored in Revision Hub</td>
+                                <td style="padding: 8px; color: #16a34a; font-weight: 700;">PASSED</td>
+                            </tr>
+                            <tr style="border-bottom: 1px solid #e2e8f0; height: 38px;">
+                                <td style="padding: 8px;"><strong>Security Testing</strong></td>
+                                <td style="padding: 8px;">Unauthenticated access to <code>/admin-panel/</code></td>
+                                <td style="padding: 8px;">Redirected to <code>/login/</code> with 403 prevention</td>
+                                <td style="padding: 8px; color: #16a34a; font-weight: 700;">PASSED</td>
+                            </tr>
+                            <tr style="height: 38px;">
+                                <td style="padding: 8px;"><strong>Responsive UI Testing</strong></td>
+                                <td style="padding: 8px;">Flashcard 3D flip on mobile, tablet, and desktop</td>
+                                <td style="padding: 8px;">Touch flip and smooth CSS 3D transforms</td>
+                                <td style="padding: 8px; color: #16a34a; font-weight: 700;">PASSED</td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+
+            <div class="slide-footer">
+                <span>LearnMate MCA Academic Project • Ganpat University (AMPICS)</span>
+                <span>Slide 15</span>
+            </div>
+        </div>
+
+        <!-- ============================================================== -->
+        <!-- SLIDE 16: CONCLUSION & FUTURE SCOPE                           -->
+        <!-- ============================================================== -->
+        <div class="slide">
+            <div class="slide-header">
+                <div class="gu-badge">
+                    <svg class="gu-badge-logo" viewBox="0 0 40 40" fill="none">
+                        <circle cx="20" cy="20" r="18" stroke="#ffffff" stroke-width="2"/>
+                        <path d="M20 8 L24 16 L32 16 L26 22 L28 30 L20 25 L12 30 L14 22 L8 16 L16 16 Z" fill="#ffffff"/>
+                    </svg>
+                    <div class="gu-badge-name">Ganpat<br>University</div>
+                    <div class="gu-badge-subtext">॥ विद्या परं भूषणम् ॥</div>
+                    <div class="gu-badge-institute">AMPICS</div>
+                </div>
+                <div class="gu-top-ribbon">
+                    <span>A SOCIALLY RESPONSIBLE UNIVERSITY</span>
+                </div>
+                <h2 class="slide-title">8.0 Conclusion &amp; Future Scope</h2>
+            </div>
+
+            <div class="slide-body">
+                <div class="grid-2col">
+                    <div class="feature-card" style="border-top-color: #059669;">
+                        <h4>🎯 Project Conclusion</h4>
+                        <p><strong>LearnMate</strong> successfully bridges the gap between passive reading and active knowledge mastery for MCA students:</p>
+                        <ul>
+                            <li>Combines notes, interactive cards, quizzes, and mistake revision in one cohesive dashboard.</li>
+                            <li>Provides faculty with centralized oversight and manual certificate authorization.</li>
+                            <li>Clean Django MVT architecture ensures high scalability, security, and maintainability.</li>
+                        </ul>
+                    </div>
+
+                    <div class="feature-card" style="border-top-color: #4b23b1;">
+                        <h4>🚀 Future Roadmap</h4>
+                        <ul>
+                            <li><strong>AI Doubt Solver:</strong> Integration of Gemini / LLM chatbot to explain incorrect quiz answers in natural language.</li>
+                            <li><strong>Gamified Leaderboards:</strong> Real-time student ranking and daily revision streak badges.</li>
+                            <li><strong>Mobile App (PWA / Flutter):</strong> Push notifications for daily flashcard review reminders.</li>
+                            <li><strong>QR Verification Portal:</strong> Public verification scanner for employer diploma checking.</li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+
+            <div class="slide-footer">
+                <span>LearnMate MCA Academic Project • Ganpat University (AMPICS)</span>
+                <span>Slide 16</span>
+            </div>
+        </div>
+
+
+    </div>
+
+    <!-- Presentation Engine JavaScript -->
+    <script>
+        const slides = document.querySelectorAll('.slide');
+        const slideCounter = document.getElementById('slideCounter');
+        const slideSelect = document.getElementById('slideSelect');
+        let currentSlide = 6; // Start on Slide 7 (3.3.1 About Front-End) as requested
+
+        function updateSlideDisplay() {
+            slides.forEach((slide, idx) => {
+                slide.classList.toggle('active', idx === currentSlide);
+            });
+            slideCounter.textContent = `Slide ${currentSlide + 1} / ${slides.length}`;
+            slideSelect.value = currentSlide;
+        }
+
+        function nextSlide() {
+            if (currentSlide < slides.length - 1) {
+                currentSlide++;
+                updateSlideDisplay();
+            }
+        }
+
+        function prevSlide() {
+            if (currentSlide > 0) {
+                currentSlide--;
+                updateSlideDisplay();
+            }
+        }
+
+        function goToSlide(index) {
+            if (index >= 0 && index < slides.length) {
+                currentSlide = index;
+                updateSlideDisplay();
+            }
+        }
+
+        function toggleFullScreen() {
+            const stage = document.getElementById('presentationStage');
+            if (!document.fullscreenElement) {
+                if (stage.requestFullscreen) {
+                    stage.requestFullscreen();
+                } else if (stage.webkitRequestFullscreen) {
+                    stage.webkitRequestFullscreen();
+                } else if (stage.msRequestFullscreen) {
+                    stage.msRequestFullscreen();
+                }
+            } else {
+                if (document.exitFullscreen) {
+                    document.exitFullscreen();
+                }
+            }
+        }
+
+        // Keyboard navigation (Arrow keys, Space bar, PageUp, PageDown)
+        window.addEventListener('keydown', (e) => {
+            if (e.key === 'ArrowRight' || e.key === ' ' || e.key === 'PageDown') {
+                e.preventDefault();
+                nextSlide();
+            } else if (e.key === 'ArrowLeft' || e.key === 'PageUp') {
+                e.preventDefault();
+                prevSlide();
+            } else if (e.key === 'f' || e.key === 'F') {
+                toggleFullScreen();
+            }
+        });
+
+        // Initialize to Slide 6 (matching the photo)
+        updateSlideDisplay();
+    </script>
+</body>
+</html>

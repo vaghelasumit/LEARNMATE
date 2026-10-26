@@ -1,0 +1,58 @@
+{% extends 'base.html' %}
+
+{% block title %}Manage Users - Admin{% endblock %}
+
+{% block content %}
+<div class="container py-3">
+    <div class="d-flex justify-content-between align-items-center mb-4">
+        <div>
+            <h3 class="fw-bold mb-1">Manage Registered Students</h3>
+            <p class="text-muted small mb-0">List and manage student accounts registered on LearnMate</p>
+        </div>
+        <a href="{% url 'admin_dashboard' %}" class="btn btn-outline-secondary btn-sm">
+            Back to Dashboard
+        </a>
+    </div>
+
+    <div class="custom-card p-4">
+        <div class="table-responsive">
+            <table class="table table-hover align-middle">
+                <thead class="table-light">
+                    <tr>
+                        <th>#</th>
+                        <th>Username</th>
+                        <th>Full Name</th>
+                        <th>Email</th>
+                        <th>Quiz Attempts</th>
+                        <th>Certificates</th>
+                        <th>Joined Date</th>
+                        <th>Action</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for st in students %}
+                    <tr>
+                        <td>{{ forloop.counter }}</td>
+                        <td><code>{{ st.username }}</code></td>
+                        <td><strong>{{ st.first_name|default:"-" }}</strong></td>
+                        <td>{{ st.email }}</td>
+                        <td><span class="badge bg-primary">{{ st.quiz_attempts.count }}</span></td>
+                        <td><span class="badge bg-success">{{ st.certificates.count }}</span></td>
+                        <td>{{ st.date_joined|date:"d M Y" }}</td>
+                        <td>
+                            <a href="{% url 'admin_delete_user' st.id %}" class="btn btn-outline-danger btn-sm" onclick="return confirm('Are you sure you want to delete this student account?');">
+                                Delete
+                            </a>
+                        </td>
+                    </tr>
+                    {% empty %}
+                    <tr>
+                        <td colspan="8" class="text-center py-4 text-muted">No students registered yet.</td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+    </div>
+</div>
+{% endblock %}

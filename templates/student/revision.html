@@ -1,0 +1,150 @@
+{% extends 'base.html' %}
+
+{% block title %}
+{% if selected_subject %}
+{{ selected_subject.subject_name }} - Mistake Revision
+{% else %}
+Mistake Revision - LearnMate
+{% endif %}
+{% endblock %}
+
+{% block content %}
+<div class="container py-3">
+
+
+    <!-- Header Banner -->
+    <div class="bg-white border rounded p-4 mb-4 shadow-sm">
+        <h3 class="fw-bold mb-0 text-dark">
+            {% if selected_subject %}
+            {{ selected_subject.subject_name }}
+            {% else %}
+            Mistake Revision
+            {% endif %}
+        </h3>
+    </div>
+
+
+
+    <!-- Retake Revision Quiz -->
+    {% if selected_subject and revisions %}
+    <div
+        class="bg-white border rounded p-3 mb-4 d-flex justify-content-between align-items-center flex-wrap gap-2 shadow-sm">
+        <div>
+            <h6 class="fw-bold mb-0 text-dark">Retake Quiz</h6>
+        </div>
+        <a href="{% url 'take_revision_quiz' selected_subject.subject_id %}"
+            class="btn btn-primary btn-sm px-3 fw-semibold">
+            Retake Quiz
+        </a>
+    </div>
+    {% endif %}
+
+    <!-- Mistake List for the Selected Course Only -->
+    <div class="row g-4">
+        {% for rev in revisions %}
+        <div class="col-lg-6">
+            <div class="custom-card p-4 h-100 d-flex flex-column justify-content-between border bg-white shadow-sm">
+                <div>
+                    <div class="d-flex justify-content-between align-items-center mb-3 flex-wrap gap-2">
+                        <div>
+                            <span class="badge bg-primary-subtle text-primary fw-semibold me-1">
+                                Question {{ forloop.counter }} of {{ revisions|length }}
+                            </span>
+                            <span
+                                class="badge {% if rev.revision_status == 'Mastered' %}bg-success{% else %}bg-warning text-dark{% endif %}">
+                                {{ rev.revision_status }}
+                            </span>
+                        </div>
+                        <!-- Bookmark Question Button -->
+                        <button class="btn btn-sm bookmark-toggle-btn {% if rev.question.question_id in bookmarked_question_ids %}btn-warning{% else %}btn-outline-warning{% endif %} py-1 px-2"
+                                data-type="question" data-id="{{ rev.question.question_id }}"
+                                data-label-active="Bookmarked" data-label-inactive="Bookmark Question"
+                                title="Bookmark this question">
+                            <i class="bi {% if rev.question.question_id in bookmarked_question_ids %}bi-bookmark-fill{% else %}bi-bookmark{% endif %} me-1"></i>
+                            <span>{% if rev.question.question_id in bookmarked_question_ids %}Bookmarked{% else %}Bookmark Question{% endif %}</span>
+                        </button>
+                    </div>
+
+                    <h5 class="fw-bold text-dark mb-3" style="line-height: 1.5;">{{ rev.question.question_text }}</h5>
+
+                    <!-- MCQ Options with Correct Answer Highlighted -->
+                    <div class="list-group mb-3 small">
+                        <div
+                            class="list-group-item {% if rev.question.correct_answer == 'A' %}bg-success-subtle border-success fw-bold text-success{% endif %}">
+                            <strong>A.</strong> {{ rev.question.option_a }}
+                            {% if rev.question.correct_answer == 'A' %}
+                            <span class="badge bg-success float-end">Correct Answer</span>
+                            {% endif %}
+                        </div>
+                        <div
+                            class="list-group-item {% if rev.question.correct_answer == 'B' %}bg-success-subtle border-success fw-bold text-success{% endif %}">
+                            <strong>B.</strong> {{ rev.question.option_b }}
+                            {% if rev.question.correct_answer == 'B' %}
+                            <span class="badge bg-success float-end">Correct Answer</span>
+                            {% endif %}
+                        </div>
+                        <div
+                            class="list-group-item {% if rev.question.correct_answer == 'C' %}bg-success-subtle border-success fw-bold text-success{% endif %}">
+                            <strong>C.</strong> {{ rev.question.option_c }}
+                            {% if rev.question.correct_answer == 'C' %}
+                            <span class="badge bg-success float-end">Correct Answer</span>
+                            {% endif %}
+                        </div>
+                        <div
+                            class="list-group-item {% if rev.question.correct_answer == 'D' %}bg-success-subtle border-success fw-bold text-success{% endif %}">
+                            <strong>D.</strong> {{ rev.question.option_d }}
+                            {% if rev.question.correct_answer == 'D' %}
+                            <span class="badge bg-success float-end">Correct Answer</span>
+                            {% endif %}
+                        </div>
+                    </div>
+
+                    <!-- Answers comparison box: Your Answer vs Correct Answer -->
+                    <div class="mb-3">
+                        {% if rev.last_selected_answer %}
+                        <div
+                            class="p-2 mb-2 rounded bg-danger-subtle text-danger border border-danger-subtle small d-flex justify-content-between align-items-center">
+                            <span><strong>Your previous answer:</strong> Option {{ rev.last_selected_answer }}</span>
+                            <span class="badge bg-danger">Incorrect</span>
+                        </div>
+                        {% endif %}
+                        <div
+                            class="p-2 rounded bg-success-subtle text-success border border-success-subtle small d-flex justify-content-between align-items-center">
+                            <span><strong>Correct answer:</strong> Option {{ rev.question.correct_answer }}</span>
+                            <span class="badge bg-success">Correct</span>
+                        </div>
+                    </div>
+
+                    {% if rev.question.explanation %}
+                    <div class="p-3 bg-light rounded border mb-3 small">
+                        <div class="text-muted">
+                            <strong class="text-dark">Explanation:</strong> {{ rev.question.explanation }}
+                        </div>
+                    </div>
+                    {% endif %}
+                </div>
+
+            </div>
+        </div>
+        {% empty %}
+        <div class="col-12 text-center py-5">
+            <div class="p-5 bg-white rounded border shadow-sm">
+                {% if selected_subject %}
+                <h4 class="fw-bold text-dark">No Pending Mistakes for {{ selected_subject.subject_name }}!</h4>
+                <p class="text-muted">You have either answered all quiz questions correctly or already mastered all
+                    previous mistakes for this subject.</p>
+                <a href="{% url 'course_detail' selected_subject.subject_id %}" class="btn btn-primary btn-sm px-3">
+                    Back to {{ selected_subject.subject_name }}
+                </a>
+                {% else %}
+                <h4 class="fw-bold text-dark">No Pending Mistakes!</h4>
+                <p class="text-muted">You have no recorded mistakes. Attempt subject quizzes to practice and identify
+                    areas to revise!</p>
+                <a href="{% url 'courses' %}" class="btn btn-primary btn-sm px-3">Explore Subjects</a>
+                {% endif %}
+            </div>
+        </div>
+        {% endfor %}
+    </div>
+</div>
+{% endblock %}
