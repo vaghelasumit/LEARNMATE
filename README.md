@@ -1,3 +1,4 @@
+<<<<<<< HEAD
 # LearnMate - Centralized Learning & Revision Platform
 
 **An MCA Academic Project Submitted to Ganpat University (A M Patel Institute of Computer Studies)**
@@ -132,3 +133,6 @@ LEARNMATE_MCA/
 5. **Smart Bookmarks**: Save materials and flashcards for quick revision before exams.
 6. **Official Certificate of Completion**: Printable & verifiable certificate of completion branded for Ganpat University (AMPICS).
 7. **Admin / Teacher Dashboard**: Comprehensive management of courses, study notes, flashcards, MCQs, and student performance oversight.
+=======
+# LEARNMATE
+>>>>>>> cfc439e990163d04054ba835081ae90fa7ed74f3
